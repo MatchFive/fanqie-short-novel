@@ -4,6 +4,8 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  // 桌面应用使用 file:// 协议加载，所有资源必须用相对路径
+  base: './',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

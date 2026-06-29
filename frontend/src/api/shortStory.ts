@@ -184,11 +184,28 @@ export const shortStoryApi = {
 };
 
 /** 创建短篇小说 */
-export function createShortStoryApi() {
-  return client.post<{ id: string }>(`/short-stories/novels`, { title: '未命名短篇小说' });
+export function createShortStoryApi(title?: string) {
+  return client.post<{ id: string }>(`/short-stories/novels`, { title: title || '未命名短篇小说' });
 }
 
 /** 更新小说标题 */
 export function updateNovelApi(novelId: string, title: string) {
   return client.put(`/short-stories/novels/${novelId}`, { title });
+}
+
+/** 获取小说列表 */
+export function listNovelsApi() {
+  return client.get<NovelListItem[]>(`/short-stories/novels`);
+}
+
+/** 小说列表项 */
+export interface NovelListItem {
+  id: string;
+  title: string;
+  type: string;
+  genre: string | null;
+  target_word_count: number | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }

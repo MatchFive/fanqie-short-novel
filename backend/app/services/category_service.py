@@ -1,9 +1,8 @@
 """
 分类标签服务
-加载番茄短篇分类 JSON 并提供分类配置 CRUD
+从独立 JSON 文件加载分类数据，提供分类配置 CRUD
 纯本地运行版本
 """
-
 import json
 from typing import Dict, List, Any, Optional
 from pathlib import Path
@@ -17,95 +16,121 @@ from app.core.logging_config import get_logger
 
 logger = get_logger("fanqie_novel.category_service")
 
+# 数据文件路径常量
+DATA_DIR = Path(__file__).parent.parent.parent.parent / "data"
+
 
 class CategoryService:
     """分类标签服务"""
 
-    _category_data: Optional[Dict[str, Any]] = None
+    _category_metadata: Optional[Dict[str, Any]] = None
 
-    @classmethod
-    def _get_json_path(cls) -> Path:
-        """获取分类 JSON 文件路径"""
-        return Path(__file__).parent.parent.parent.parent / "data" / "番茄短篇分类.json"
-
-    @classmethod
-    def _load_category_data(cls) -> Dict[str, Any]:
-        """加载分类 JSON 数据"""
-        if cls._category_data is not None:
-            return cls._category_data
-
-        json_path = cls._get_json_path()
+    # ── 各分类文件加载器 ──────────────────────────────────────
+    @staticmethod
+    def _load_json(filename: str) -> Any:
+        path = DATA_DIR / filename
         try:
-            with open(json_path, "r", encoding="utf-8") as f:
-                cls._category_data = json.load(f)
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
         except FileNotFoundError:
-            logger.error("番茄短篇分类.json 未找到: %s", json_path)
-            cls._category_data = {}
+            logger.error("分类数据文件未找到: %s", path)
+            return None
         except json.JSONDecodeError as e:
-            logger.error("解析番茄短篇分类.json 失败: %s", e)
-            cls._category_data = {}
+            logger.error("解析 %s 失败: %s", filename, e)
+            return None
 
-        return cls._category_data
+    @classmethod
+    def _load_main_categories(cls) -> List[Dict[str, str]]:
+        """从「故事分类.json」加载主分类"""
+        data = cls._load_json("故事分类.json")
+        if not data or not isinstance(data, dict):
+            return []
+        categories = []
+        for gender, info in data.items():
+            if isinstance(info, dict):
+                for name in info.get("category", []):
+                    categories.append({"name": name, "description": "", "gender": gender})
+        return categories
+
+    @classmethod
+    def _load_plot_categories(cls) -> List[Dict[str, Any]]:
+        """从「情节分类.json」加载情节分类"""
+        data = cls._load_json("情节分类.json")
+        if not data or not isinstance(data, list):
+            return []
+        plot_categories = []
+        for item in data:
+            if isinstance(item, dict):
+                lv2 = item.get("level2", "")
+                plot_categories.append({
+                    "level1": lv2,                   # 新版无 level1，用 level2 替代
+                    "level2": lv2,
+                    "level3": item.get("level3", ""),
+                    "tags": item.get("tags", []),
+                    "remark": item.get("remark", ""),
+                })
+        return plot_categories
+
+    @classmethod
+    def _load_character_tags(cls) -> List[str]:
+        """从「角色关键词.json」加载角色关键词"""
+        data = cls._load_json("角色关键词.json")
+        if not data or not isinstance(data, list):
+            return []
+        return [item for item in data if isinstance(item, str)]
+
+    @classmethod
+    def _load_emotion_processes(cls) -> List[str]:
+        """从「情绪过程.json」加载情绪过程"""
+        data = cls._load_json("情绪过程.json")
+        if not data or not isinstance(data, list):
+            return []
+        return [item for item in data if isinstance(item, str)]
+
+    @classmethod
+    def _load_story_backgrounds(cls) -> List[str]:
+        """从「故事背景.json」加载故事背景"""
+        data = cls._load_json("故事背景.json")
+        if not data or not isinstance(data, list):
+            return []
+        return [item for item in data if isinstance(item, str)]
 
     @classmethod
     def get_metadata(cls) -> Dict[str, Any]:
-        """获取分类元数据"""
-        data = cls._load_category_data()
+        """获取分类元数据（缓存）"""
+        if cls._category_metadata is not None:
+            return cls._category_metadata
 
-        main_categories = []
-        for item in data.get("短篇主分类", [])[1:]:
-            if len(item) >= 3:
-                main_categories.append({
-                    "name": item[0],
-                    "description": item[1],
-                    "gender": item[2],
-                })
-
-        plot_categories = []
-        for item in data.get("情节分类", [])[1:]:
-            if len(item) >= 4:
-                plot_categories.append({
-                    "level1": item[0],
-                    "level2": item[1],
-                    "level3": item[2],
-                    "tags": [t.strip() for t in item[3].split("、") if t.strip()] if item[3] else [],
-                    "remark": item[4] if len(item) > 4 else "",
-                })
-
-        character_tags = [item[0] for item in data.get("角色关键词", []) if item]
-        emotion_processes = [item[0] for item in data.get("情绪过程", []) if item]
-        story_backgrounds = [item[0] for item in data.get("故事主要背景", []) if item]
-
-        return {
-            "main_categories": main_categories,
-            "plot_categories": plot_categories,
-            "character_tags": character_tags,
-            "emotion_processes": emotion_processes,
-            "story_backgrounds": story_backgrounds,
+        cls._category_metadata = {
+            "main_categories": cls._load_main_categories(),
+            "plot_categories": cls._load_plot_categories(),
+            "character_tags": cls._load_character_tags(),
+            "emotion_processes": cls._load_emotion_processes(),
+            "story_backgrounds": cls._load_story_backgrounds(),
         }
+        return cls._category_metadata
 
     @classmethod
     def get_main_category_description(cls, name: str) -> str:
         """获取主分类描述"""
-        data = cls._load_category_data()
-        for item in data.get("短篇主分类", [])[1:]:
-            if len(item) >= 2 and item[0] == name:
-                return item[1]
+        for cat in cls._load_main_categories():
+            if cat["name"] == name:
+                return cat.get("description", "")
         return ""
 
     @classmethod
     def get_plot_tag_requirements(cls, tags: Optional[List[str]]) -> str:
-        """获取情节标签要求描述"""
+        """获取情节标签要求描述（兼容旧版与新版数据格式）"""
         if not tags:
             return "  - 按情节自然发展"
 
-        data = cls._load_category_data()
+        plot_data = cls._load_plot_categories()
         requirements = []
-        for item in data.get("情节分类", [])[1:]:
-            if len(item) >= 4 and item[2] in tags:
-                tag_list = "、".join([t.strip() for t in item[3].split("、") if t.strip()]) if item[3] else ""
-                remark = f" ({item[4]})" if len(item) > 4 and item[4] else ""
-                requirements.append(f"  - {item[2]}：{tag_list}{remark}")
+        for item in plot_data:
+            if item["level3"] in tags:
+                tag_list = "、".join(item.get("tags", [])) if item.get("tags") else ""
+                remark = f" ({item['remark']})" if item.get("remark") else ""
+                requirements.append(f"  - {item['level3']}：{tag_list}{remark}")
 
         return "\n".join(requirements) if requirements else "  - 按情节自然发展"
 

@@ -5,8 +5,11 @@ AI 辅助短篇小说创作助手 - 纯本地运行版本
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pathlib import Path
 
-from app.config import settings
+from app.config import settings, PROJECT_ROOT
 from app.database import engine
 from app.models import Base
 from app.core.logging_config import setup_logging, get_logger
@@ -95,5 +98,36 @@ async def health_check():
 from app.api.short_story import router as short_story_router
 
 app.include_router(short_story_router, prefix="/api/v1")
+
+# ===== 桌面模式：挂载前端静态文件 =====
+FRONTEND_DIR = PROJECT_ROOT / "frontend" / "dist"
+
+if FRONTEND_DIR.exists() and (FRONTEND_DIR / "index.html").exists():
+    static_dir = str(FRONTEND_DIR)
+
+    # 静态资源（assets 目录）
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIR / "assets")), name="frontend_assets")
+
+    # favicon / vite.svg
+    @app.get("/vite.svg", include_in_schema=False)
+    async def serve_favicon():
+        favicon_path = FRONTEND_DIR / "vite.svg"
+        if favicon_path.exists():
+            return FileResponse(favicon_path)
+        return None
+
+    # SPA 回退：所有非 API 非静态路由返回 index.html
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        file_path = FRONTEND_DIR / full_path
+        # 先尝试直接返回匹配的文件
+        if file_path.is_file():
+            return FileResponse(file_path)
+        # 否则回退到 index.html（SPA 路由）
+        return FileResponse(FRONTEND_DIR / "index.html")
+
+    logger.info("前端静态文件已挂载: %s", static_dir)
+else:
+    logger.warning("前端 dist 目录不存在，跳过静态文件挂载（请先执行 npm run build）")
 
 logger.info("路由注册完成")

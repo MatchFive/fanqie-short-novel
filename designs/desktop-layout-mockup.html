@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>番茄小说创作工具 - 首页布局</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box; margin: 0; padding: 0;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #E6E6E6;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 24px;
+  }
+  .app-window {
+    width: 1200px; height: 780px;
+    background: #FFFFFF;
+    border: 1px solid #E6E6E6;
+    display: flex; flex-direction: column;
+  }
+
+  /* ====== 标题栏 ====== */
+  .titlebar {
+    height: 40px; background: #F5F5F5;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 12px;
+    border-bottom: 1px solid #E6E6E6;
+    user-select: none;
+  }
+  .titlebar-left { display: flex; align-items: center; gap: 10px; }
+  .app-icon {
+    width: 18px; height: 18px; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #FFF; font-weight: bold;
+  }
+  .app-title { font-size: 13px; color: #000; font-weight: 500; }
+  .backend-status {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: #737373;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: #000; border-radius: 50%;
+  }
+  .titlebar-right { display: flex; align-items: center; gap: 0; }
+  .titlebar-btn {
+    width: 36px; height: 28px;
+    border: none; background: transparent;
+    color: #737373; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .titlebar-btn:hover { background: #E6E6E6; color: #000; }
+  .titlebar-btn.close:hover { background: #000; color: #FFF; }
+
+  /* ====== 主体 ====== */
+  .app-body { flex: 1; display: flex; overflow: hidden; }
+
+  /* ====== 左侧极窄导航 ====== */
+  .sidebar {
+    width: 60px; min-width: 60px;
+    background: #FAFAFA;
+    border-right: 1px solid #E6E6E6;
+    display: flex; flex-direction: column;
+    align-items: center; padding-top: 12px; gap: 2px;
+  }
+  .nav-item {
+    width: 44px; height: 44px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .15s; color: #737373;
+    text-decoration: none; gap: 2px;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover { background: #F5F5F5; color: #000; }
+  .nav-item.active { background: #000; color: #FFF; }
+  .nav-item.active .nav-label { color: #FFF; }
+  .nav-icon { font-size: 18px; line-height: 1; }
+  .nav-label { font-size: 9px; font-weight: 500; }
+  .nav-spacer { flex: 1; }
+  .nav-bottom {
+    padding-bottom: 12px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+
+  /* ====== 主内容区 ====== */
+  .main-content {
+    flex: 1; display: flex; flex-direction: column;
+    background: #FFF; overflow-y: auto;
+  }
+
+  /* 首页头部 */
+  .home-header {
+    padding: 32px 36px 24px;
+    border-bottom: 1px solid #E6E6E6;
+  }
+  .home-greeting { font-size: 12px; color: #737373; margin-bottom: 4px; }
+  .home-title { font-size: 24px; color: #000; font-weight: 700; }
+
+  /* 统计卡片行 */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; padding: 0 36px; margin-bottom: 32px;
+    border: 1px solid #E6E6E6; border-top: none;
+  }
+  .stat-card {
+    padding: 20px 24px; display: flex; align-items: center; gap: 16px;
+    transition: background .15s; cursor: default;
+    border-right: 1px solid #E6E6E6;
+  }
+  .stat-card:last-child { border-right: none; }
+  .stat-card:hover { background: #FAFAFA; }
+  .stat-icon {
+    font-size: 28px; flex-shrink: 0; line-height: 1;
+  }
+  .stat-details { flex: 1; }
+  .stat-value { font-size: 26px; font-weight: 700; color: #000; line-height: 1.1; }
+  .stat-label { font-size: 12px; color: #737373; margin-top: 2px; }
+
+  /* 作品列表区域 */
+  .works-section { padding: 0 36px 32px; }
+  .section-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .section-title { font-size: 16px; font-weight: 600; color: #000; }
+
+  /* 搜索+筛选行 */
+  .section-actions { display: flex; gap: 12px; align-items: center; }
+  .search-box { position: relative; }
+  .search-input {
+    width: 240px; height: 36px;
+    background: #FFF; border: 1px solid #E6E6E6;
+    padding: 0 14px 0 36px;
+    font-size: 13px; color: #000; outline: none; font-family: inherit;
+  }
+  .search-input::placeholder { color: #9E9E9E; }
+  .search-input:focus { border-color: #000; }
+  .search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: #9E9E9E; font-size: 14px; pointer-events: none;
+  }
+  .filter-tags { display: flex; }
+  .filter-tag {
+    padding: 0 16px; height: 36px;
+    font-size: 13px; cursor: pointer; transition: all .15s;
+    background: #FFF; color: #737373;
+    border: 1px solid #E6E6E6; border-right: none;
+    display: flex; align-items: center;
+  }
+  .filter-tag:first-child { border-right: 1px solid #E6E6E6; }
+  .filter-tag:last-child { border-right: 1px solid #E6E6E6; }
+  .filter-tag:hover { background: #F5F5F5; color: #000; }
+  .filter-tag.active { background: #000; color: #FFF; border-color: #000; }
+
+  .btn-primary {
+    height: 36px; padding: 0 20px;
+    background: #000; border: 1px solid #000; color: #FFF;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: opacity .15s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary {
+    height: 36px; padding: 0 16px;
+    background: #FFF; border: 1px solid #E6E6E6; color: #000;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all .15s;
+  }
+  .btn-secondary:hover { border-color: #000; }
+
+  /* 作品卡片网格 */
+  .works-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0; border: 1px solid #E6E6E6;
+  }
+  .work-card {
+    background: #FFF; padding: 20px;
+    cursor: pointer; transition: background .15s;
+    border-right: 1px solid #E6E6E6;
+    border-bottom: 1px solid #E6E6E6;
+  }
+  .work-card:hover { background: #FAFAFA; }
+
+  .card-top { display: flex; gap: 14px; margin-bottom: 16px; }
+  .card-cover {
+    width: 48px; height: 60px;
+    background: #F5F5F5; border: 1px solid #E6E6E6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .card-info { flex: 1; min-width: 0; }
+  .card-title {
+    font-size: 15px; font-weight: 600; color: #000;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 6px;
+  }
+  .card-meta-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: #737373; margin-bottom: 3px;
+  }
+  .card-meta-dot { width: 3px; height: 3px; background: #C0C0C0; }
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .card-tag {
+    padding: 0 8px; height: 22px; line-height: 22px;
+    font-size: 11px; background: #F5F5F5; color: #737373;
+    border: 1px solid #E6E6E6;
+  }
+
+  .card-progress-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-progress-bar {
+    flex: 1; height: 4px; background: #F5F5F5;
+    border: 1px solid #E6E6E6; overflow: hidden;
+  }
+  .card-progress-fill {
+    height: 100%; background: #000;
+    transition: width .3s;
+  }
+  .card-progress-text { font-size: 11px; color: #737373; flex-shrink: 0; }
+  .card-status {
+    font-size: 11px; padding: 0 8px; height: 22px; line-height: 22px;
+    font-weight: 500; flex-shrink: 0; border: 1px solid #E6E6E6;
+  }
+  .card-status.draft { background: #FFF; color: #9E9E9E; }
+  .card-status.writing { background: #F5F5F5; color: #000; }
+  .card-status.done { background: #000; color: #FFF; border-color: #000; }
+
+  /* 空状态 */
+  .empty-state {
+    grid-column: 1 / -1; padding: 80px 0; text-align: center; border: none;
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.2; }
+  .empty-title { font-size: 16px; color: #737373; margin-bottom: 8px; }
+  .empty-desc { font-size: 13px; color: #9E9E9E; margin-bottom: 24px; }
+
+  /* 滚动条 */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #FFF; border-left: 1px solid #E6E6E6; }
+  ::-webkit-scrollbar-thumb { background: #D0D0D0; }
+  ::-webkit-scrollbar-thumb:hover { background: #B0B0B0; }
+</style>
+</head>
+<body>
+
+<div class="app-window">
+
+  <!-- ===== 标题栏 ===== -->
+  <div class="titlebar">
+    <div class="titlebar-left">
+      <div class="app-icon">🍅</div>
+      <span class="app-title">番茄小说创作工具</span>
+    </div>
+    <div class="backend-status">
+      <span class="status-dot"></span> 后端服务正常
+    </div>
+    <div class="titlebar-right">
+      <button class="titlebar-btn" title="最小化">─</button>
+      <button class="titlebar-btn" title="最大化">□</button>
+      <button class="titlebar-btn close" title="关闭">✕</button>
+    </div>
+  </div>
+
+  <!-- ===== 主体 ===== -->
+  <div class="app-body">
+
+    <!-- ===== 左侧极窄导航 ===== -->
+    <div class="sidebar">
+      <div class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">✏️</span>
+        <span class="nav-label">创作</span>
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-bottom">
+        <div class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">设置</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 主内容区：首页 ===== -->
+    <div class="main-content">
+
+      <!-- 头部 -->
+      <div class="home-header">
+        <div class="home-greeting">下午好 👋</div>
+        <div class="home-title">番茄小说创作工作台</div>
+      </div>
+
+      <!-- 统计卡片 -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-details">
+            <div class="stat-value">12</div>
+            <div class="stat-label">全部作品</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-details">
+            <div class="stat-value">3</div>
+            <div class="stat-label">已完成</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✍️</div>
+          <div class="stat-details">
+            <div class="stat-value">5</div>
+            <div class="stat-label">创作中</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📝</div>
+          <div class="stat-details">
+            <div class="stat-value">48.2<span style="font-size:14px;font-weight:400;">w</span></div>
+            <div class="stat-label">累计字数</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 作品列表 -->
+      <div class="works-section">
+        <div class="section-bar">
+          <div class="section-title">全部作品</div>
+          <div class="section-actions">
+            <div class="filter-tags">
+              <span class="filter-tag active">全部</span>
+              <span class="filter-tag">创作中</span>
+              <span class="filter-tag">已完成</span>
+              <span class="filter-tag">草稿</span>
+            </div>
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input class="search-input" placeholder="搜索作品..." />
+            </div>
+            <button class="btn-primary">＋ 新建作品</button>
+          </div>
+        </div>
+
+        <div class="works-grid">
+          <!-- 作品卡片 1 -->
+          <div class="work-card">
+            <div class="card-top">
+              <div class="card-cover">📖</div>
+              <div class="card-info">
+                <div class="card-title">霸总的白月光回来了</div>
+                <div class="card-meta-row">
+                  <span>女频 · 现代言情</span>
+                  <span class="card-meta-dot"></span>
+                  <span>6.2w字</span>
+                  <span class="card-meta-dot"></span>
+                  <span>2小时前</span>
+                </div>
+                <div class="card-tags">
+                  <span class="card-tag">霸总</span>
+                  <span class="card-tag">先虐后甜</span>
+                  <span class="card-tag">都市</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-progress-row">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:57%"></div>
+              </div>
+              <span class="card-progress-text">4/7步</span>
+              <span class="card-status writing">创作中</span>
+            </div>
+          </div>
+
+          <!-- 作品卡片 2 -->
+          <div class="work-card">
+            <div class="card-top">
+              <div class="card-cover">🔥</div>
+              <div class="card-info">
+                <div class="card-title">修仙归来当赘婿</div>
+                <div class="card-meta-row">
+                  <span>男频 · 都市异能</span>
+                  <span class="card-meta-dot"></span>
+                  <span>1.1w字</span>
+                  <span class="card-meta-dot"></span>
+                  <span>昨天</span>
+                </div>
+                <div class="card-tags">
+                  <span class="card-tag">赘婿</span>
+                  <span class="card-tag">爽文</span>
+                  <span class="card-tag">豪门</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-progress-row">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:14%"></div>
+              </div>
+              <span class="card-progress-text">1/7步</span>
+              <span class="card-status writing">创作中</span>
+            </div>
+          </div>
+
+          <!-- 作品卡片 3 -->
+          <div class="work-card">
+            <div class="card-top">
+              <div class="card-cover">💀</div>
+              <div class="card-info">
+                <div class="card-title">死亡游戏：规则怪谈</div>
+                <div class="card-meta-row">
+                  <span>男频 · 悬疑推理</span>
+                  <span class="card-meta-dot"></span>
+                  <span>0字</span>
+                  <span class="card-meta-dot"></span>
+                  <span>3天前</span>
+                </div>
+                <div class="card-tags">
+                  <span class="card-tag">规则怪谈</span>
+                  <span class="card-tag">惊悚</span>
+                  <span class="card-tag">校园</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-progress-row">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:0%"></div>
+              </div>
+              <span class="card-progress-text">0/7步</span>
+              <span class="card-status draft">草稿</span>
+            </div>
+          </div>
+
+          <!-- 作品卡片 4 - 已完成 -->
+          <div class="work-card">
+            <div class="card-top">
+              <div class="card-cover">👻</div>
+              <div class="card-info">
+                <div class="card-title">诡异医院：夜班值班</div>
+                <div class="card-meta-row">
+                  <span>恐怖 · 惊悚悬疑</span>
+                  <span class="card-meta-dot"></span>
+                  <span>8.5w字</span>
+                  <span class="card-meta-dot"></span>
+                  <span>6月25日</span>
+                </div>
+                <div class="card-tags">
+                  <span class="card-tag">医院</span>
+                  <span class="card-tag">悬疑</span>
+                  <span class="card-tag">惊悚</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-progress-row">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:100%"></div>
+              </div>
+              <span class="card-progress-text">7/7步</span>
+              <span class="card-status done">已完成</span>
+            </div>
+          </div>
+
+          <!-- 作品卡片 5 -->
+          <div class="work-card">
+            <div class="card-top">
+              <div class="card-cover">🏰</div>
+              <div class="card-info">
+                <div class="card-title">穿越成了废妃又怎样</div>
+                <div class="card-meta-row">
+                  <span>女频 · 古代言情</span>
+                  <span class="card-meta-dot"></span>
+                  <span>3.8w字</span>
+                  <span class="card-meta-dot"></span>
+                  <span>6月20日</span>
+                </div>
+                <div class="card-tags">
+                  <span class="card-tag">穿越</span>
+                  <span class="card-tag">宫斗</span>
+                  <span class="card-tag">甜宠</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-progress-row">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:42%"></div>
+              </div>
+              <span class="card-progress-text">3/7步</span>
+              <span class="card-status writing">创作中</span>
+            </div>
+          </div>
+
+          <!-- 作品卡片 6 -->
+          <div class="work-card">
+            <div class="card-top">
+              <div class="card-cover">⚔️</div>
+              <div class="card-info">
+                <div class="card-title">九龙拉棺：我在地底修仙</div>
+                <div class="card-meta-row">
+                  <span>男频 · 玄幻仙侠</span>
+                  <span class="card-meta-dot"></span>
+                  <span>0字</span>
+                  <span class="card-meta-dot"></span>
+                  <span>6月18日</span>
+                </div>
+                <div class="card-tags">
+                  <span class="card-tag">修仙</span>
+                  <span class="card-tag">爽文</span>
+                  <span class="card-tag">古代</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-progress-row">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:0%"></div>
+              </div>
+              <span class="card-progress-text">0/7步</span>
+              <span class="card-status draft">草稿</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
