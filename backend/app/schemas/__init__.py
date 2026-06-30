@@ -40,6 +40,7 @@ class NovelResponse(NovelBase):
     id: str
     created_at: datetime
     updated_at: datetime
+    word_count: int = 0  # 实际已写字数（聚合章节）
 
 
 # ============== Chapter ==============

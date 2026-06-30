@@ -93,12 +93,41 @@ async def create_novel(
 async def list_novels(
     db: AsyncSession = Depends(get_db),
 ):
-    """获取短篇小说列表"""
+    """获取短篇小说列表（含实际已写字数）"""
     result = await db.execute(
         select(Novel).where(Novel.type == "short").order_by(Novel.updated_at.desc())
     )
     novels = result.scalars().all()
-    return novels
+
+    # 聚合每部小说的实际字数
+    from app.models import Chapter
+    novel_ids = [n.id for n in novels]
+    if novel_ids:
+        ch_result = await db.execute(
+            select(Chapter.novel_id, func.sum(Chapter.word_count).label("total_wc"))
+            .where(Chapter.novel_id.in_(novel_ids))
+            .group_by(Chapter.novel_id)
+        )
+        wc_map = {row[0]: row[1] or 0 for row in ch_result.all()}
+    else:
+        wc_map = {}
+
+    # 构造响应（Pydantic v2 model_dump / dict）
+    response = []
+    for n in novels:
+        d = {
+            "id": n.id,
+            "title": n.title,
+            "type": n.type,
+            "genre": n.genre,
+            "target_word_count": n.target_word_count or 0,
+            "status": n.status,
+            "word_count": wc_map.get(n.id, 0),
+            "created_at": n.created_at,
+            "updated_at": n.updated_at,
+        }
+        response.append(d)
+    return response
 
 
 @router.get("/novels/{novel_id}", response_model=NovelResponse)

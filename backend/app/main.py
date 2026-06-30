@@ -94,6 +94,21 @@ async def health_check():
     return {"status": "ok", "version": "1.0.0", "app": settings.APP_NAME}
 
 
+# 配置读取（供前端设置页初始化使用）
+@app.get("/api/v1/config", tags=["config"])
+async def get_config():
+    """返回当前 LLM 配置（从 .env 读取），API Key 脱敏显示前 8 位"""
+    api_key = settings.LLM_API_KEY or ""
+    masked_key = api_key[:8] + "..." if len(api_key) > 8 else (api_key[:4] + "***" if api_key else "")
+    return {
+        "apiUrl": settings.LLM_BASE_URL,
+        "apiKey": masked_key,
+        "modelName": settings.LLM_MODEL,
+        "maxTokens": settings.LLM_MAX_TOKENS,
+        "temperature": settings.LLM_TEMPERATURE,
+    }
+
+
 # 注册路由
 from app.api.short_story import router as short_story_router
 

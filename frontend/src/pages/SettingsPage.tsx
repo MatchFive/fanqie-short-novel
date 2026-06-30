@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from '@/stores/appStore';
 
 interface SettingsForm {
@@ -14,16 +14,35 @@ interface SettingsForm {
 }
 
 const DEFAULTS: SettingsForm = {
-  apiUrl: 'https://api.openai.com/v1',
+  apiUrl: '',
   apiKey: '',
-  modelName: 'gpt-4o',
+  modelName: '',
   maxTokens: 4096,
-  temperature: 0.8,
+  temperature: 0.7,
   chapterWords: 1000,
   totalWords: 15000,
   writingStyle: '流畅自然',
   narrativeView: '第三人称',
 };
+
+/** 从后端 /api/v1/config 加载 .env 中的 LLM 配置作为初始值 */
+async function loadServerConfig(): Promise<Partial<SettingsForm>> {
+  try {
+    const res = await fetch('/api/v1/config');
+    if (!res.ok) return {};
+    const data = await res.json();
+    return {
+      apiUrl: data.apiUrl || DEFAULTS.apiUrl,
+      apiKey: '', // 服务端返回的是脱敏 key，不回填完整值
+      modelName: data.modelName || DEFAULTS.modelName,
+      maxTokens: data.maxTokens ?? DEFAULTS.maxTokens,
+      temperature: data.temperature ?? DEFAULTS.temperature,
+    };
+  } catch {
+    // 后端未启动时静默降级，用 localStorage 或纯默认值
+    return {};
+  }
+}
 
 function loadSettings(): SettingsForm {
   try {
@@ -40,6 +59,17 @@ export default function SettingsPage() {
 
   const [form, setForm] = useState<SettingsForm>(loadSettings);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'testing' | 'connected' | 'failed'>('idle');
+  const [serverLoaded, setServerLoaded] = useState(false);
+
+  // 首次挂载时从后端加载 .env 配置（仅在 localStorage 无记录时覆盖）
+  useEffect(() => {
+    loadServerConfig().then((cfg) => {
+      if (Object.keys(cfg).length > 0) {
+        setForm((prev) => ({ ...prev, ...cfg }));
+        setServerLoaded(true);
+      }
+    });
+  }, []);
 
   const update = (patch: Partial<SettingsForm>) => setForm((prev) => ({ ...prev, ...patch }));
 

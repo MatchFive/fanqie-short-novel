@@ -43,7 +43,7 @@ export default function CreatePage() {
 
       <div className="grid grid-cols-2 gap-3 mt-6">
         {/* 手动创建 */}
-        <div className="border border-border p-5 bg-background">
+        <div className="border border-border p-5 bg-background flex flex-col">
           <div className="text-[32px] mb-4">📖</div>
           <h2 className="font-semibold text-base mb-4">创建短篇小说</h2>
           <div className="mb-4">
@@ -58,6 +58,8 @@ export default function CreatePage() {
           <p className="text-xs text-muted-foreground mb-4">
             AI 将引导你完成 7 步创作流程，从分类到导出
           </p>
+          {/* 弹性填充 + 按钮始终贴底 */}
+          <div className="flex-1" />
           <button
             onClick={handleManualCreate}
             disabled={isCreating}
@@ -68,7 +70,7 @@ export default function CreatePage() {
         </div>
 
         {/* 随机创作 */}
-        <div className="border border-dashed border-border p-5 bg-background">
+        <div className="border border-dashed border-border p-5 bg-background flex flex-col">
           <div className="text-[32px] mb-4">🎲</div>
           <h2 className="font-semibold text-base mb-4">一键随机创作</h2>
           <div className="mb-4 flex flex-col gap-1.5 text-[13px]">
@@ -76,10 +78,11 @@ export default function CreatePage() {
             <span className="text-muted-foreground">→ 自动生成 3 个故事方案</span>
             <span className="text-muted-foreground">→ 快速进入写作环节</span>
           </div>
+          <div className="flex-1" />
           <button
             onClick={handleRandomCreate}
             disabled={isCreating}
-            className="w-full px-4 py-2 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 flex items-center justify-center mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? '创建中...' : '🎲 开始随机创作'}
           </button>

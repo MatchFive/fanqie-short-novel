@@ -198,6 +198,11 @@ export function listNovelsApi() {
   return client.get<NovelListItem[]>(`/short-stories/novels`);
 }
 
+/** 删除小说 */
+export function deleteNovelApi(novelId: string) {
+  return client.delete(`/short-stories/novels/${novelId}`);
+}
+
 /** 小说列表项 */
 export interface NovelListItem {
   id: string;
@@ -205,6 +210,7 @@ export interface NovelListItem {
   type: string;
   genre: string | null;
   target_word_count: number | null;
+  word_count?: number;   // 实际已写字数（聚合章节）
   status: string;
   created_at: string;
   updated_at: string;
