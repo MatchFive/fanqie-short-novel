@@ -9,9 +9,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from app.config import settings
+from app.config import settings, PROJECT_ROOT
 
-LOG_DIR = Path(__file__).parent.parent.parent / "logs"
+# 日志目录：始终跟随 PROJECT_ROOT（开发模式在项目根，打包模式在 exe 旁）
+LOG_DIR = PROJECT_ROOT / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 
 
@@ -62,7 +63,8 @@ def setup_logging(level: Optional[str] = None) -> None:
     root_logger.addHandler(file_handler)
 
     # 降低第三方库日志级别
-    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
+    logging.getLogger("uvicorn.access").setLevel(logging.INFO)
+    logging.getLogger("uvicorn.error").setLevel(logging.INFO)
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
 

@@ -7,6 +7,7 @@ Short Story CRUD + 生成流程
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -319,9 +320,45 @@ async def update_short_story_setting(
 
 @router.get("/categories/metadata", response_model=CategoryMetadataResponse)
 async def get_category_metadata():
-    """获取番茄平台分类元数据"""
+    """获取番茄平台分类元数据（已合并用户自定义项）"""
     metadata = CategoryService.get_metadata()
     return metadata
+
+
+# ── 用户自定义分类数据持久化 ──────────────────────────────
+
+@router.get("/categories/user-custom")
+async def get_user_custom_data():
+    """获取用户自定义的情节分类和角色关键词（.json 文件快照）"""
+    return CategoryService.get_user_custom_data()
+
+
+class UserPlotsSaveRequest(BaseModel):
+    plots: list[dict]
+
+
+class UserCharsSaveRequest(BaseModel):
+    chars: list[str]
+
+
+@router.post("/categories/user-plots")
+async def save_user_plots(data: UserPlotsSaveRequest):
+    """保存用户自定义情节分类到 JSON 文件"""
+    try:
+        CategoryService.save_user_plots(data.plots)
+        return {"status": "ok", "count": len(data.plots)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"保存失败: {str(e)}")
+
+
+@router.post("/categories/user-chars")
+async def save_user_chars(data: UserCharsSaveRequest):
+    """保存用户自定义角色关键词到 JSON 文件"""
+    try:
+        CategoryService.save_user_chars(data.chars)
+        return {"status": "ok", "count": len(data.chars)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"保存失败: {str(e)}")
 
 
 @router.post("/{novel_id}/categories", response_model=CategoryConfigResponse)
@@ -329,11 +366,34 @@ async def create_category_config(
     novel_id: str,
     data: CategoryConfigCreate,
     db: AsyncSession = Depends(get_db),
-    service: ShortStoryService = Depends(get_llm_service),
 ):
-    """创建/更新分类配置"""
+    """创建/更新分类配置（纯数据库操作，不需要 LLM）"""
     try:
-        config = await service.set_category_config(db, novel_id, data)
+        category_service = CategoryService()
+        config = await category_service.create_or_update(db, novel_id, data)
+
+        # 同步更新 ShortStorySetting 的 target_length
+        from app.models import ShortStorySetting
+        result = await db.execute(
+            select(ShortStorySetting).where(ShortStorySetting.novel_id == novel_id)
+        )
+        setting = result.scalar_one_or_none()
+        if not setting:
+            setting = ShortStorySetting(
+                novel_id=novel_id,
+                emotional_target="爽",
+                target_length=data.target_length or 8000,
+                status="draft",
+            )
+            db.add(setting)
+        else:
+            if data.target_length is not None:
+                setting.target_length = data.target_length
+        setting.category_config_id = config.id
+        await db.commit()
+        await db.refresh(config)
+
+        logger.info("创建分类配置: novel_id=%s, main_category=%s", novel_id, data.main_category)
         return config
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

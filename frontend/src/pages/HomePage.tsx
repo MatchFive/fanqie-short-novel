@@ -67,6 +67,7 @@ export default function HomePage() {
   const [search, setSearch] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [stats, setStats] = useState({ total: 0, done: 0, progress: 0, totalWords: 0 });
   const showToast = useAppStore((s) => s.showToast);
 
   /** 直接创建新作品并进入创作流程 */
@@ -78,7 +79,7 @@ export default function HomePage() {
       showToast(mode === 'random' ? '随机创作已启动' : '作品创建成功', 'success');
       navigate(`/categories?novelId=${novel.id}`);
     } catch {
-      navigate('/categories');
+      showToast('作品创建失败，请检查后端服务是否正常', 'error');
     } finally {
       setIsCreating(false);
     }
@@ -103,6 +104,27 @@ export default function HomePage() {
 
   useEffect(() => { loadNovels(); }, [loadNovels]);
 
+  const loadStats = useCallback(() => {
+    listNovelsApi()
+      .then((res: NovelListItem[]) => {
+        const novels = res || [];
+        setStats({
+          total: novels.length,
+          done: novels.filter((n) => n.status === 'completed').length,
+          progress: novels.filter((n) => n.status === 'in_progress').length,
+          totalWords: novels.reduce(
+            (sum, n) => sum + ((n.word_count ?? 0) > 0 ? n.word_count! : (n.target_word_count || 0)),
+            0
+          ),
+        });
+      })
+      .catch(() => {
+        // 统计失败静默处理
+      });
+  }, []);
+
+  useEffect(() => { loadStats(); }, [loadStats]);
+
   /** 删除小说 */
   const handleDelete = async (e: React.MouseEvent, novel: NovelCard) => {
     e.stopPropagation();
@@ -126,14 +148,34 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* 标题区 */}
-      <div className="mb-7">
-        <h1 className="text-xl font-bold mb-1">下午好 👋</h1>
-        <p className="text-[13px] text-muted-foreground">番茄小说创作工作台</p>
+      {/* 标题区 + 统计面板 */}
+      <div className="mb-7 flex items-start justify-between gap-6">
+        <div>
+          <h1 className="text-xl font-bold mb-1">下午好 👋</h1>
+          <p className="text-[13px] text-muted-foreground">番茄小说创作工作台</p>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          <div className="border border-border p-2 bg-background min-w-[90px]">
+            <div className="text-[18px] font-bold">{stats.total}</div>
+            <div className="text-[10px] text-muted-foreground">全部作品</div>
+          </div>
+          <div className="border border-border p-2 bg-background min-w-[90px]">
+            <div className="text-[18px] font-bold">{stats.done}</div>
+            <div className="text-[10px] text-muted-foreground">已完成</div>
+          </div>
+          <div className="border border-border p-2 bg-background min-w-[90px]">
+            <div className="text-[18px] font-bold">{stats.progress}</div>
+            <div className="text-[10px] text-muted-foreground">创作中</div>
+          </div>
+          <div className="border border-border p-2 bg-background min-w-[90px]">
+            <div className="text-[18px] font-bold">{formatWords(stats.totalWords)}</div>
+            <div className="text-[10px] text-muted-foreground">累计字数</div>
+          </div>
+        </div>
       </div>
 
-      {/* 创作入口卡片区 */}
-      <div className="mb-7 space-y-2">
+      {/* 创作入口卡片区：一行三个，保持横向低高度 */}
+      <div className="mb-7 grid grid-cols-3 gap-4">
         {/* 创建短篇小说 */}
         <div
           onClick={() => handleCreate('manual')}
@@ -141,18 +183,16 @@ export default function HomePage() {
             isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-foreground'
           }`}
         >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors flex-shrink-0">
               <FileText className="w-4 h-4" />
             </div>
-            <div>
-              <div className="text-sm font-semibold">📝 创建短篇小说</div>
-              <div className="text-xs text-muted-foreground mt-0.5">手动配置分类→爽点→方案...</div>
+            <div className="min-w-0">
+              <div className="text-sm font-semibold truncate">📝 创建短篇小说</div>
+              <div className="text-xs text-muted-foreground mt-0.5 truncate">手动配置分类→爽点→方案...</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors">开始</span>
-          </div>
+          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors flex-shrink-0 ml-2">开始</span>
         </div>
 
         {/* 一键随机创作 */}
@@ -162,18 +202,16 @@ export default function HomePage() {
             isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-foreground'
           }`}
         >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors flex-shrink-0">
               <Shuffle className="w-4 h-4" />
             </div>
-            <div>
-              <div className="text-sm font-semibold">🎲 一键随机创作</div>
-              <div className="text-xs text-muted-foreground mt-0.5">随机组合预置要素快速启动</div>
+            <div className="min-w-0">
+              <div className="text-sm font-semibold truncate">🎲 一键随机创作</div>
+              <div className="text-xs text-muted-foreground mt-0.5 truncate">随机组合预置要素快速启动</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors">开始</span>
-          </div>
+          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors flex-shrink-0 ml-2">开始</span>
         </div>
 
         {/* 紧跟时事创作 */}
@@ -186,18 +224,16 @@ export default function HomePage() {
               NEW
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 border border-[#F97316]/30 bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 border border-[#F97316]/30 bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors flex-shrink-0">
               <Flame className="w-4 h-4 text-[#F97316]" />
             </div>
-            <div>
-              <div className="text-sm font-semibold">🔥 紧跟时事创作</div>
-              <div className="text-xs text-muted-foreground mt-0.5">AI分析热点/你讲身边事→自动创作</div>
+            <div className="min-w-0">
+              <div className="text-sm font-semibold truncate">🔥 紧跟时事创作</div>
+              <div className="text-xs text-muted-foreground mt-0.5 truncate">AI分析热点/你讲身边事→自动创作</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors">开始</span>
-          </div>
+          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors flex-shrink-0 ml-2">开始</span>
         </div>
       </div>
 

@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Save, Plus, GripVertical, X } from "lucide-react";
 import { useShortStoryStore } from "@/stores/shortStoryStore";
 import { useAppStore } from "@/stores/appStore";
+import { shortStoryApi } from "@/api/shortStory";
 // StepNavigator removed — sidebar now shows step progress
 import type { CategoryConfigCreate, PlotCategory } from "@/types/shortStory";
 
@@ -201,16 +202,34 @@ export default function CategoryConfigPage() {
     }
   }, [categoryConfig]);
 
-  // ── 加载 metadata 到本地可编辑数据 ───────────────────────
+  // ── 加载 metadata 到本地可编辑数据（后端已合并用户自定义项）──
   useEffect(() => {
     if (categoryMetadata) {
-      setLocalPlotData(
-        categoryMetadata.plot_categories.map((p) => ({
-          ...p,
-          _id: `${p.level1}-${p.level2}-${p.level3}`,
-        }))
-      );
-      setLocalCharData([...categoryMetadata.character_tags]);
+      const plots: ManagedPlot[] = categoryMetadata.plot_categories.map((p) => ({
+        ...p,
+        _id: `${p.level1}-${p.level2}-${p.level3}`,
+      }));
+      const chars: string[] = [...categoryMetadata.character_tags];
+
+      // 确保已选中的项都有 chip（可能来自 categoryConfig 回填）
+      const existingPlotKeys = new Set(plots.map((p) => p.level3));
+      for (const tag of selectedPlots) {
+        if (!existingPlotKeys.has(tag)) {
+          plots.push({
+            level1: "自定义", level2: "自定义", level3: tag,
+            tags: [], remark: "", _id: tag,
+          });
+        }
+      }
+      const existingCharKeys = new Set(chars);
+      for (const tag of selectedCharacters) {
+        if (!existingCharKeys.has(tag)) {
+          chars.push(tag);
+        }
+      }
+
+      setLocalPlotData(plots);
+      setLocalCharData(chars);
     }
   }, [categoryMetadata]);
 
@@ -365,7 +384,7 @@ export default function CategoryConfigPage() {
     setPlotAddLevel2("");
   }, []);
 
-  const confirmPlotAdd = useCallback(() => {
+  const confirmPlotAdd = useCallback(async () => {
     const name = plotAddName.trim();
     const lv2 = plotAddLevel2 || "自定义";
     if (!name) {
@@ -376,22 +395,31 @@ export default function CategoryConfigPage() {
       showToast("该情节已存在", "warning");
       return;
     }
-    setLocalPlotData((prev) => [
-      ...prev,
-      { level1: lv2, level2: lv2, level3: name, tags: [], remark: "", _id: name },
-    ]);
+    const newItem: ManagedPlot = { level1: lv2, level2: lv2, level3: name, tags: [], remark: "", _id: name };
+    const updated = [...localPlotData, newItem];
+    setLocalPlotData(updated);
     cancelPlotAdd();
-    showToast(`已新增: ${name}`, "success");
+    // 保存到后端 JSON 文件
+    try {
+      await shortStoryApi.saveUserPlots(updated.map((p) => ({ level2: p.level2, level3: p.level3, tags: p.tags, remark: p.remark })));
+      showToast(`已新增: ${name}`, "success");
+    } catch {
+      showToast("已添加到本地，但保存到文件失败", "warning");
+    }
   }, [plotAddName, plotAddLevel2, localPlotData, cancelPlotAdd, showToast]);
 
   const deletePlot = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const item = localPlotData.find((d) => d._id === id);
-      setLocalPlotData((prev) => prev.filter((d) => d._id !== id));
+      const updated = localPlotData.filter((d) => d._id !== id);
+      setLocalPlotData(updated);
       if (item) {
         setSelectedPlots((prev) => prev.filter((p) => p !== item.level3));
         showToast(`已删除: ${item.level3}`, "info");
       }
+      try {
+        await shortStoryApi.saveUserPlots(updated.map((p) => ({ level2: p.level2, level3: p.level3, tags: p.tags, remark: p.remark })));
+      } catch { /* 静默 */ }
     },
     [localPlotData, showToast]
   );
@@ -411,7 +439,7 @@ export default function CategoryConfigPage() {
     setCharAddName("");
   }, []);
 
-  const confirmCharAdd = useCallback(() => {
+  const confirmCharAdd = useCallback(async () => {
     const name = charAddName.trim();
     if (!name) {
       showToast("请输入关键词", "warning");
@@ -421,17 +449,27 @@ export default function CategoryConfigPage() {
       showToast("该关键词已存在", "warning");
       return;
     }
-    setLocalCharData((prev) => [...prev, name]);
+    const updated = [...localCharData, name];
+    setLocalCharData(updated);
     cancelCharAdd();
-    showToast(`已新增: ${name}`, "success");
+    try {
+      await shortStoryApi.saveUserChars(updated);
+      showToast(`已新增: ${name}`, "success");
+    } catch {
+      showToast("已添加到本地，但保存到文件失败", "warning");
+    }
   }, [charAddName, localCharData, cancelCharAdd, showToast]);
 
   const deleteChar = useCallback(
-    (idx: number) => {
+    async (idx: number) => {
       const name = localCharData[idx];
-      setLocalCharData((prev) => prev.filter((_, i) => i !== idx));
+      const updated = localCharData.filter((_, i) => i !== idx);
+      setLocalCharData(updated);
       setSelectedCharacters((prev) => prev.filter((c) => c !== name));
       showToast(`已删除: ${name}`, "info");
+      try {
+        await shortStoryApi.saveUserChars(updated);
+      } catch { /* 静默 */ }
     },
     [localCharData, showToast]
   );
@@ -468,6 +506,7 @@ export default function CategoryConfigPage() {
         const arr = [...prev];
         const [item] = arr.splice(src, 1);
         arr.splice(targetIdx, 0, item);
+        shortStoryApi.saveUserPlots(arr.map((p) => ({ level2: p.level2, level3: p.level3, tags: p.tags, remark: p.remark }))).catch(() => {});
         return arr;
       });
     },
@@ -485,6 +524,7 @@ export default function CategoryConfigPage() {
         const arr = [...prev];
         const [item] = arr.splice(src, 1);
         arr.splice(targetIdx, 0, item);
+        shortStoryApi.saveUserChars(arr).catch(() => {});
         return arr;
       });
     },
@@ -493,7 +533,14 @@ export default function CategoryConfigPage() {
 
   // ===================== 保存 ================================
   const handleSave = useCallback(async () => {
-    if (!novelId) return;
+    // DEBUG: 确认 handleSave 被调用
+    fetch('/api/v1/health').catch(() => {});
+    console.warn('[DEBUG] handleSave called, novelId=', novelId, 'mainCategory=', mainCategory);
+
+    if (!novelId) {
+      showToast("缺少小说ID，请返回首页重新创建", "error");
+      return;
+    }
     if (!mainCategory) {
       showToast("请选择主分类", "error");
       return;
@@ -531,8 +578,9 @@ export default function CategoryConfigPage() {
       await saveCategoryConfig(novelId, data);
       showToast("分类配置已保存", "success");
       navigate(`/hook?novelId=${novelId}`);
-    } catch {
-      // 错误已在 store 处理
+    } catch (err: any) {
+      const detail = err?.apiError?.detail || err?.apiError?.message || "保存失败，请检查后端服务";
+      showToast(detail, "error");
     } finally {
       setIsSaving(false);
     }

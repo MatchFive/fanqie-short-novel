@@ -3,13 +3,15 @@ Fanqie Short Novel - FastAPI Backend
 AI 辅助短篇小说创作助手 - 纯本地运行版本
 """
 
-from fastapi import FastAPI
+import os
+
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
 
-from app.config import settings, PROJECT_ROOT
+from app.config import settings, PROJECT_ROOT, RESOURCE_ROOT, ENV_FILE_PATH
 from app.database import engine
 from app.models import Base
 from app.core.logging_config import setup_logging, get_logger
@@ -109,6 +111,81 @@ async def get_config():
     }
 
 
+# 配置写入（前端设置页保存时调用）
+@app.post("/api/v1/config", tags=["config"])
+async def save_config(data: dict):
+    """保存 LLM 配置到 .env 文件并更新运行中的配置"""
+    import re
+
+    # 前端发送的字段映射到 .env 中的键
+    key_map = {
+        "apiUrl": "LLM_BASE_URL",
+        "apiKey": "LLM_API_KEY",
+        "modelName": "LLM_MODEL",
+        "maxTokens": "LLM_MAX_TOKENS",
+        "temperature": "LLM_TEMPERATURE",
+    }
+
+    updates = {}
+    for js_key, env_key in key_map.items():
+        if js_key in data and data[js_key] is not None:
+            updates[env_key] = str(data[js_key]).strip()
+
+    if not updates:
+        raise HTTPException(status_code=400, detail="没有有效的配置项")
+
+    # 读取现有 .env 内容
+    env_path = ENV_FILE_PATH
+    lines = []
+    if env_path.exists():
+        lines = env_path.read_text(encoding="utf-8").splitlines()
+
+    # 更新匹配的行
+    updated_keys = set()
+    new_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            new_lines.append(line)
+            continue
+        # 匹配 KEY=VALUE 或 KEY="VALUE"
+        match = re.match(r'^(\w+)\s*=\s*.*$', stripped)
+        if match and match.group(1) in updates:
+            new_lines.append(f'{match.group(1)}={updates[match.group(1)]}')
+            updated_keys.add(match.group(1))
+        else:
+            new_lines.append(line)
+
+    # 追加未匹配到的新键
+    for env_key, value in updates.items():
+        if env_key not in updated_keys:
+            new_lines.append(f"{env_key}={value}")
+
+    env_path.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+
+    # 同步更新运行中的 settings 对象
+    pydantic_map = {
+        "LLM_BASE_URL": "LLM_BASE_URL",
+        "LLM_API_KEY": "LLM_API_KEY",
+        "LLM_MODEL": "LLM_MODEL",
+        "LLM_MAX_TOKENS": "LLM_MAX_TOKENS",
+        "LLM_TEMPERATURE": "LLM_TEMPERATURE",
+    }
+    for env_key, value in updates.items():
+        os.environ[env_key] = value
+        attr = pydantic_map.get(env_key)
+        if attr:
+            try:
+                setattr(settings, attr, float(value) if "." in value and attr in ("LLM_TEMPERATURE",) else (
+                    int(value) if value.isdigit() and attr == "LLM_MAX_TOKENS" else value
+                ))
+            except (ValueError, TypeError):
+                setattr(settings, attr, value)
+
+    logger.info("LLM 配置已保存到 %s (更新: %s)", env_path, list(updates.keys()))
+    return {"status": "ok", "updated": list(updates.keys())}
+
+
 # 注册路由
 from app.api.short_story import router as short_story_router
 from app.api.trending import router as trending_router
@@ -117,7 +194,7 @@ app.include_router(short_story_router, prefix="/api/v1")
 app.include_router(trending_router, prefix="/api/v1")
 
 # ===== 桌面模式：挂载前端静态文件 =====
-FRONTEND_DIR = PROJECT_ROOT / "frontend" / "dist"
+FRONTEND_DIR = RESOURCE_ROOT / "frontend" / "dist"
 
 if FRONTEND_DIR.exists() and (FRONTEND_DIR / "index.html").exists():
     static_dir = str(FRONTEND_DIR)

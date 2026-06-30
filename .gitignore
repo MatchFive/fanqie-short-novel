@@ -54,3 +54,6 @@ logs/
 # PyInstaller
 # ============================
 *.spec
+build-exe/
+dist-exe/
+$null

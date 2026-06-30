@@ -1,18 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useShortStoryStore } from '@/stores/shortStoryStore';
-import { listNovelsApi, type NovelListItem } from '@/api/shortStory';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-
-/** 格式化字数显示 */
-function formatWords(count: number): string {
-  if (count >= 10000) return `${(count / 10000).toFixed(1)}万字`;
-  if (count > 0) return `${count.toLocaleString()}字`;
-  return '0 字';
-}
-
-// 顶栏不再放步骤 Tab -- 侧边栏是唯一的导航入口
-// 作品列表区块已移除 -- 首页作为创作步骤的首入口
 
 const STEP_ITEMS = [
   { path: '/categories', label: '分类标签', step: 1 },
@@ -31,61 +20,30 @@ function getStepStatus(stepPath: string, currentPath: string, doneSteps: number)
   return { isActive, isDone };
 }
 
-export default function Layout() {
+export default function StudioLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const novelId = searchParams.get('novelId') || '';
 
-  // 动态步骤进度 -- 从 store 读取实际完成的步骤数
   const stepProgress = useShortStoryStore((s) => s.stepProgress);
   const doneSteps = stepProgress ? stepProgress.filter(Boolean).length : 0;
 
-  // 当有 novelId 时自动加载进度
   const loadProgress = useShortStoryStore((s) => s.loadProgress);
   useEffect(() => {
     if (novelId) loadProgress(novelId);
   }, [novelId, loadProgress]);
 
-  const isStepPage = STEP_ITEMS.some(s => location.pathname.startsWith(s.path));
-  const currentStepItem = STEP_ITEMS.find(s => location.pathname.startsWith(s.path));
-
-  // 跳转时携带 novelId
-  const navWithNovel = (path: string) => {
+  const navWithNovel = useCallback((path: string) => {
     if (novelId) {
       navigate(`${path}?novelId=${novelId}`);
     } else {
       navigate(path);
     }
-  };
+  }, [navigate, novelId]);
 
-  // 首页统计面板数据
-  const [stats, setStats] = useState({ total: 0, done: 0, progress: 0, totalWords: 0 });
-  const loadStats = useCallback(() => {
-    if (location.pathname !== '/') return;
-    listNovelsApi()
-      .then((res: NovelListItem[]) => {
-        const novels = res || [];
-        setStats({
-          total: novels.length,
-          done: novels.filter((n) => n.status === 'completed').length,
-          progress: novels.filter((n) => n.status === 'in_progress').length,
-          totalWords: novels.reduce(
-            (sum, n) => sum + ((n.word_count ?? 0) > 0 ? n.word_count! : (n.target_word_count || 0)),
-            0
-          ),
-        });
-      })
-      .catch(() => {
-        // 统计失败静默处理，不影响主流程
-      });
-  }, [location.pathname]);
+  const currentStepItem = STEP_ITEMS.find(s => location.pathname.startsWith(s.path));
 
-  useEffect(() => {
-    loadStats();
-  }, [loadStats]);
-
-  // 面包屑导航
   const breadcrumb = currentStepItem
     ? [
         { label: '首页', path: '/' },
@@ -95,10 +53,9 @@ export default function Layout() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Header -- 极简顶栏，导航集中在侧边栏 */}
       <header className="h-10 flex items-center border-b border-border bg-secondary px-4 gap-3 flex-shrink-0" role="banner">
         <button
-          onClick={() => navWithNovel('/')}
+          onClick={() => navigate('/')}
           className="font-bold text-[13px] whitespace-nowrap hover:opacity-80 transition-opacity cursor-pointer"
           aria-label="回到首页"
         >
@@ -110,21 +67,17 @@ export default function Layout() {
         </span>
       </header>
 
-      {/* Main */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-[220px] border-r border-border bg-secondary flex flex-col flex-shrink-0" role="navigation" aria-label="侧边栏导航">
-          {/* 创作步骤 */}
+        <aside className="w-[220px] border-r border-border bg-secondary flex flex-col flex-shrink-0" role="navigation" aria-label="创作步骤导航">
           <div className="p-3 border-b border-border flex-1 overflow-y-auto">
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">创作步骤</div>
-            {/* 首页入口 */}
             <div
-              onClick={() => navWithNovel('/')}
+              onClick={() => navigate('/')}
               role="button"
               tabIndex={0}
               aria-current={location.pathname === '/' ? 'page' : undefined}
               aria-label="首页"
-              onKeyDown={(e) => { if (e.key === 'Enter') navWithNovel('/'); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') navigate('/'); }}
               className={`min-h-[44px] px-2 py-1.5 text-[13px] cursor-pointer flex items-center gap-1.5 mb-1 ${
                 location.pathname === '/' ? 'bg-foreground text-primary-foreground' : 'hover:bg-hover'
               }`}
@@ -165,63 +118,9 @@ export default function Layout() {
             })}
           </div>
 
-          {/* 首页统计面板 */}
-          {location.pathname === '/' && (
-            <div className="p-3 border-t border-border">
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">创作统计</div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="border border-border p-2 bg-background">
-                  <div className="text-[18px] font-bold">{stats.total}</div>
-                  <div className="text-[10px] text-muted-foreground">全部作品</div>
-                </div>
-                <div className="border border-border p-2 bg-background">
-                  <div className="text-[18px] font-bold">{stats.done}</div>
-                  <div className="text-[10px] text-muted-foreground">已完成</div>
-                </div>
-                <div className="border border-border p-2 bg-background">
-                  <div className="text-[18px] font-bold">{stats.progress}</div>
-                  <div className="text-[10px] text-muted-foreground">创作中</div>
-                </div>
-                <div className="border border-border p-2 bg-background">
-                  <div className="text-[18px] font-bold">{formatWords(stats.totalWords)}</div>
-                  <div className="text-[10px] text-muted-foreground">累计字数</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 底部 */}
-          <div className="p-3 border-t border-border">
-            <div
-              onClick={() => navWithNovel('/settings')}
-              role="button"
-              tabIndex={0}
-              aria-label="设置"
-              onKeyDown={(e) => { if (e.key === 'Enter') navWithNovel('/settings'); }}
-              className={`min-h-[44px] px-2 py-1.5 text-[13px] cursor-pointer flex items-center ${
-                location.pathname === '/settings' ? 'bg-foreground text-primary-foreground' : 'hover:bg-hover'
-              }`}
-            >
-              ⚙ 设置
-            </div>
-            <div
-              onClick={() => navWithNovel('/export')}
-              role="button"
-              tabIndex={0}
-              aria-label="导出数据"
-              onKeyDown={(e) => { if (e.key === 'Enter') navWithNovel('/export'); }}
-              className={`min-h-[44px] px-2 py-1.5 text-[13px] cursor-pointer flex items-center ${
-                location.pathname === '/export' ? 'bg-foreground text-primary-foreground' : 'hover:bg-hover'
-              }`}
-            >
-              📦 导出数据
-            </div>
-          </div>
         </aside>
 
-        {/* Content */}
         <main className="flex-1 overflow-y-auto" role="main">
-          {/* 面包屑导航 */}
           {breadcrumb.length > 0 && (
             <nav className="px-6 pt-4 pb-0 flex items-center gap-1 text-[11px] text-muted-foreground" aria-label="面包屑导航">
               {breadcrumb.map((bc, i) => (

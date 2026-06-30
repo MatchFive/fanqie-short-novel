@@ -67,6 +67,17 @@ export const shortStoryApi = {
   updateCategoryConfig: (novelId: string, data: Partial<CategoryConfigCreate>) =>
     client.put<CategoryConfig>(`/short-stories/${novelId}/categories`, data),
 
+  // ── 用户自定义分类持久化（JSON 文件）──
+
+  getUserCustomData: () =>
+    client.get<{ user_plots: any[]; user_chars: string[] }>(`/short-stories/categories/user-custom`),
+
+  saveUserPlots: (plots: any[]) =>
+    client.post<{ status: string; count: number }>(`/short-stories/categories/user-plots`, { plots }),
+
+  saveUserChars: (chars: string[]) =>
+    client.post<{ status: string; count: number }>(`/short-stories/categories/user-chars`, { chars }),
+
   // ============== Step 2: 核心爽点 ==============
 
   generateHooks: (novelId: string, data: GenerateHooksRequest) =>
