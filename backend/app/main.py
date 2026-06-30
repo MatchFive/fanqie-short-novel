@@ -111,8 +111,10 @@ async def get_config():
 
 # 注册路由
 from app.api.short_story import router as short_story_router
+from app.api.trending import router as trending_router
 
 app.include_router(short_story_router, prefix="/api/v1")
+app.include_router(trending_router, prefix="/api/v1")
 
 # ===== 桌面模式：挂载前端静态文件 =====
 FRONTEND_DIR = PROJECT_ROOT / "frontend" / "dist"

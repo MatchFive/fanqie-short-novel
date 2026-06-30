@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listNovelsApi, deleteNovelApi, type NovelListItem } from '@/api/shortStory';
-import { Loader2, Trash2 } from 'lucide-react';
+import { listNovelsApi, deleteNovelApi, createShortStoryApi, type NovelListItem } from '@/api/shortStory';
+import { useAppStore } from '@/stores/appStore';
+import { Loader2, Trash2, FileText, Shuffle, Flame } from 'lucide-react';
 
 interface NovelCard {
   id: string;
@@ -47,7 +48,7 @@ function mapNovelToCard(n: NovelListItem): NovelCard {
     steps: status === 'done' ? 7 : status === 'draft' ? 0 : 3,
     navigateTo: status === 'done'
       ? `/integrate?novelId=${n.id}`
-      : `/create?novelId=${n.id}`,
+      : `/open?novelId=${n.id}`,
   };
 }
 
@@ -65,6 +66,23 @@ export default function HomePage() {
   const [filter, setFilter] = useState<'all' | 'progress' | 'done' | 'draft'>('all');
   const [search, setSearch] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const showToast = useAppStore((s) => s.showToast);
+
+  /** 直接创建新作品并进入创作流程 */
+  const handleCreate = async (mode: 'manual' | 'random') => {
+    if (isCreating) return;
+    setIsCreating(true);
+    try {
+      const novel = await createShortStoryApi();
+      showToast(mode === 'random' ? '随机创作已启动' : '作品创建成功', 'success');
+      navigate(`/categories?novelId=${novel.id}`);
+    } catch {
+      navigate('/categories');
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   const loadNovels = useCallback(() => {
     let cancelled = false;
@@ -106,13 +124,6 @@ export default function HomePage() {
     return true;
   });
 
-  const stats = {
-    total: novels.length,
-    done: novels.filter((n) => n.status === 'done').length,
-    progress: novels.filter((n) => n.status === 'progress').length,
-    totalWords: novels.reduce((sum, n) => sum + (n.rawWords || 0), 0),
-  };
-
   return (
     <div>
       {/* 标题区 */}
@@ -121,25 +132,72 @@ export default function HomePage() {
         <p className="text-[13px] text-muted-foreground">番茄小说创作工作台</p>
       </div>
 
-      {/* 统计卡片 */}
-      <div className="grid grid-cols-4 gap-3 mb-7">
-        <div className="border border-border p-4 bg-background">
-          <div className="text-[28px] font-bold">{stats.total}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">全部作品</div>
-        </div>
-        <div className="border border-border p-4 bg-background">
-          <div className="text-[28px] font-bold">{stats.done}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">已完成</div>
-        </div>
-        <div className="border border-border p-4 bg-background">
-          <div className="text-[28px] font-bold">{stats.progress}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">创作中</div>
-        </div>
-        <div className="border border-border p-4 bg-background">
-          <div className="text-[28px] font-bold">
-            {formatWords(stats.totalWords)}
+      {/* 创作入口卡片区 */}
+      <div className="mb-7 space-y-2">
+        {/* 创建短篇小说 */}
+        <div
+          onClick={() => handleCreate('manual')}
+          className={`border border-border bg-background p-4 flex items-center justify-between group transition-colors ${
+            isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-foreground'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold">📝 创建短篇小说</div>
+              <div className="text-xs text-muted-foreground mt-0.5">手动配置分类→爽点→方案...</div>
+            </div>
           </div>
-          <div className="text-xs text-muted-foreground mt-0.5">累计字数</div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors">开始</span>
+          </div>
+        </div>
+
+        {/* 一键随机创作 */}
+        <div
+          onClick={() => handleCreate('random')}
+          className={`border border-border bg-background p-4 flex items-center justify-between group transition-colors ${
+            isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-foreground'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors">
+              <Shuffle className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold">🎲 一键随机创作</div>
+              <div className="text-xs text-muted-foreground mt-0.5">随机组合预置要素快速启动</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors">开始</span>
+          </div>
+        </div>
+
+        {/* 紧跟时事创作 */}
+        <div
+          onClick={() => navigate('/trending')}
+          className="border border-border bg-background p-4 cursor-pointer hover:border-foreground transition-colors flex items-center justify-between group relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0">
+            <span className="inline-block px-2 py-0.5 text-[10px] font-bold bg-[#DC2626] text-white rounded-bl-sm">
+              NEW
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 border border-[#F97316]/30 bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+              <Flame className="w-4 h-4 text-[#F97316]" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold">🔥 紧跟时事创作</div>
+              <div className="text-xs text-muted-foreground mt-0.5">AI分析热点/你讲身边事→自动创作</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors">开始</span>
+          </div>
         </div>
       </div>
 
@@ -160,20 +218,12 @@ export default function HomePage() {
             </button>
           ))}
         </div>
-        <div className="flex gap-2 items-center">
-          <input
-            className="px-3 py-1.5 text-[13px] border border-border outline-none w-[200px] focus:border-foreground"
-            placeholder="搜索作品..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button
-            onClick={() => navigate('/create')}
-            className="px-4 py-1.5 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85"
-          >
-            + 新建作品
-          </button>
-        </div>
+        <input
+          className="px-3 py-1.5 text-[13px] border border-border outline-none w-[200px] focus:border-foreground"
+          placeholder="搜索作品..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
 
       {/* 加载态 */}
@@ -209,10 +259,11 @@ export default function HomePage() {
             使用 AI 辅助创作，从分类标签到全文整合一气呵成
           </p>
           <button
-            onClick={() => navigate('/create')}
-            className="px-4 py-2 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85"
+            onClick={() => handleCreate('manual')}
+            disabled={isCreating}
+            className="px-4 py-2 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            + 新建作品
+            {isCreating ? '创建中...' : '+ 新建作品'}
           </button>
         </div>
       )}

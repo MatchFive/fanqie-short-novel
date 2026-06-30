@@ -180,3 +180,32 @@ class PresetCharacterName(Base):
     usage_count = Column(Integer, default=0)
 
     created_at = Column(DateTime, server_default=func.now())
+
+
+class HotspotEvent(Base):
+    """热点事件表 — 存储抓取/用户输入的社会热点及AI分析结果"""
+    __tablename__ = "hotspot_events"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = Column(String(255), nullable=False, index=True)
+    summary = Column(Text, nullable=True)
+    source = Column(String(50), nullable=False, index=True)
+    # source 取值: "weibo" / "baidu" / "zhihu" / "user_input"
+
+    source_url = Column(String(500), nullable=True)   # 原文链接 (用户输入为空)
+    rank = Column(Integer, default=0)                  # 热度排名 (用户输入=0)
+
+    ai_suggestions = Column(JSON, nullable=True)
+    # [{ suggestion_id, genre, hook_description, hook_title,
+    #    plot_direction, emotional_target }, ...]
+
+    analysis_summary = Column(Text, nullable=True)    # AI 分析总结文本
+
+    tags = Column(JSON, nullable=True)                 # 自动提取的标签
+    # ["复仇", "逆袭", "家庭伦理", ...]
+
+    usage_count = Column(Integer, default=0)           # 被引用创作次数
+
+    fetched_at = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

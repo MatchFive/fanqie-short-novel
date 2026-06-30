@@ -1,7 +1,6 @@
 import { createHashRouter } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
-import CreatePage from './pages/CreatePage';
 import ShortStoryRedirectPage from './pages/ShortStoryRedirectPage';
 import CategoryConfigPage from './pages/CategoryConfigPage';
 import HookSelectPage from './pages/HookSelectPage';
@@ -12,6 +11,7 @@ import WritePage from './pages/WritePage';
 import IntegratePage from './pages/IntegratePage';
 import SettingsPage from './pages/SettingsPage';
 import ExportPage from './pages/ExportPage';
+import TrendingPage from './pages/TrendingPage';
 
 export const router = createHashRouter([
   // 全局 Layout 包裹的所有页面
@@ -19,7 +19,6 @@ export const router = createHashRouter([
     element: <Layout />,
     children: [
       { path: '/', element: <HomePage /> },
-      { path: '/create', element: <CreatePage /> },
       { path: '/categories', element: <CategoryConfigPage /> },
       { path: '/hook', element: <HookSelectPage /> },
       { path: '/plans', element: <PlanSelectPage /> },
@@ -29,6 +28,7 @@ export const router = createHashRouter([
       { path: '/integrate', element: <IntegratePage /> },
       { path: '/settings', element: <SettingsPage /> },
       { path: '/export', element: <ExportPage /> },
+      { path: '/trending', element: <TrendingPage /> },
     ],
   },
   // 重定向入口（不需要 Layout 壳）

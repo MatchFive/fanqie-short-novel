@@ -22,7 +22,7 @@ class LLMClient:
         model: str = "deepseek-v4-flash",
         temperature: float = 0.7,
         max_tokens: int = 4000,
-        timeout: float = 120.0,
+        timeout: float = 600.0,
     ):
         url = base_url.rstrip("/")
         if not url.endswith("/v1"):

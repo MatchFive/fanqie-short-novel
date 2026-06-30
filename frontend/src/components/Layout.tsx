@@ -1,7 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useShortStoryStore } from '@/stores/shortStoryStore';
+import { listNovelsApi, type NovelListItem } from '@/api/shortStory';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+
+/** 格式化字数显示 */
+function formatWords(count: number): string {
+  if (count >= 10000) return `${(count / 10000).toFixed(1)}万字`;
+  if (count > 0) return `${count.toLocaleString()}字`;
+  return '0 字';
+}
 
 // 顶栏不再放步骤 Tab -- 侧边栏是唯一的导航入口
 // 作品列表区块已移除 -- 首页作为创作步骤的首入口
@@ -51,11 +59,36 @@ export default function Layout() {
     }
   };
 
+  // 首页统计面板数据
+  const [stats, setStats] = useState({ total: 0, done: 0, progress: 0, totalWords: 0 });
+  const loadStats = useCallback(() => {
+    if (location.pathname !== '/') return;
+    listNovelsApi()
+      .then((res: NovelListItem[]) => {
+        const novels = res || [];
+        setStats({
+          total: novels.length,
+          done: novels.filter((n) => n.status === 'completed').length,
+          progress: novels.filter((n) => n.status === 'in_progress').length,
+          totalWords: novels.reduce(
+            (sum, n) => sum + ((n.word_count ?? 0) > 0 ? n.word_count! : (n.target_word_count || 0)),
+            0
+          ),
+        });
+      })
+      .catch(() => {
+        // 统计失败静默处理，不影响主流程
+      });
+  }, [location.pathname]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
+
   // 面包屑导航
   const breadcrumb = currentStepItem
     ? [
         { label: '首页', path: '/' },
-        { label: '创建', path: '/create' },
         { label: `Step ${currentStepItem.step}: ${currentStepItem.label}`, path: currentStepItem.path },
       ]
     : [];
@@ -131,6 +164,31 @@ export default function Layout() {
               );
             })}
           </div>
+
+          {/* 首页统计面板 */}
+          {location.pathname === '/' && (
+            <div className="p-3 border-t border-border">
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">创作统计</div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="border border-border p-2 bg-background">
+                  <div className="text-[18px] font-bold">{stats.total}</div>
+                  <div className="text-[10px] text-muted-foreground">全部作品</div>
+                </div>
+                <div className="border border-border p-2 bg-background">
+                  <div className="text-[18px] font-bold">{stats.done}</div>
+                  <div className="text-[10px] text-muted-foreground">已完成</div>
+                </div>
+                <div className="border border-border p-2 bg-background">
+                  <div className="text-[18px] font-bold">{stats.progress}</div>
+                  <div className="text-[10px] text-muted-foreground">创作中</div>
+                </div>
+                <div className="border border-border p-2 bg-background">
+                  <div className="text-[18px] font-bold">{formatWords(stats.totalWords)}</div>
+                  <div className="text-[10px] text-muted-foreground">累计字数</div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 底部 */}
           <div className="p-3 border-t border-border">
