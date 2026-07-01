@@ -21,8 +21,6 @@
 
 专为**番茄小说**等短篇内容平台设计的 AI 创作助手。配置好你的 LLM API Key，就能在 7 步之内把灵感变成一篇完整的短篇小说——分类标签 → 爽点 → 大纲 → 逐章写作 → 全文整合，全程 AI 驱动，每一步都可视可控。
 
-基于 [Novel Create](https://github.com/MatchFive/novel_creator) 拆分而来，专注于短篇内容的高效产出。
-
 ## ✨ 核心特性
 
 <table>
@@ -193,6 +191,4 @@ pyinstaller --onefile \
 
 [MIT](LICENSE)
 
-## 🙏 致谢
 
-本项目从 [Novel Create](https://github.com/MatchFive/novel_creator) 拆分而来，感谢原项目的贡献。
