@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文学温润风 · 新设计预览</title>
+<style>
+/* ============================================
+   文学温润风 (Literary Warmth) — 设计预览
+   ============================================ */
+
+:root {
+  /* 亮色模式 */
+  --bg:        #FAF7F4;
+  --fg:        #1A1512;
+  --card-bg:   #FFFFFF;
+  --primary:   #DE6B1C;
+  --primary-fg:#FFFFFF;
+  --secondary: #F2EEE9;
+  --secondary-fg:#2F2A26;
+  --muted:     #F1EDE9;
+  --muted-fg:  #7A736D;
+  --accent:    #F5EDE5;
+  --accent-fg: #B85A14;
+  --border:    #DFD9D2;
+  --input:     #DFD9D2;
+  --ring:      #DE6B1C;
+  --danger:    #DC2626;
+  --success:   #16A34A;
+  --warning:   #D97706;
+  --radius:    6px;
+  --radius-lg: 8px;
+  --radius-sm: 4px;
+  --shadow-sm: 0 1px 3px rgba(26,21,18,0.06);
+  --shadow-md: 0 2px 8px rgba(26,21,18,0.08);
+  --shadow-lg: 0 4px 16px rgba(26,21,18,0.10);
+
+  /* --- 旧版 Lovart 对照（默认隐藏） --- */
+  --old-bg:        #FFFFFF;
+  --old-fg:        #000000;
+  --old-secondary: #F5F5F5;
+  --old-border:    #E6E6E6;
+  --old-muted-fg:  #737373;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 全局导航 ---------- */
+.topbar {
+  position: sticky; top:0; z-index: 50;
+  display:flex; align-items:center;
+  height:40px; padding:0 16px; gap:12px;
+  background: var(--secondary);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.topbar .brand {
+  font-weight:700; font-size:13px; cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+}
+.topbar .brand .dot {
+  width:16px; height:16px; border-radius:var(--radius-sm);
+  background: var(--primary);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:#fff;
+}
+.topbar .spacer { flex:1; }
+.topbar .hint {
+  font-size:10px; color:var(--muted-fg);
+}
+.topbar .mode-toggle {
+  padding:4px 10px; font-size:11px; border:1px solid var(--border);
+  border-radius:var(--radius-sm); background:var(--card-bg);
+  cursor:pointer; color:var(--muted-fg);
+  transition: all 150ms;
+}
+.topbar .mode-toggle:hover { border-color:var(--primary); color:var(--primary); }
+.topbar .mode-toggle.active { background:var(--primary); color:var(--primary-fg); border-color:var(--primary); }
+
+/* ---------- 旧版模式 ---------- */
+body.old-mode {
+  --bg:        var(--old-bg);
+  --fg:        var(--old-fg);
+  --card-bg:   var(--old-bg);
+  --primary:   var(--old-fg);
+  --primary-fg:var(--old-bg);
+  --secondary: var(--old-secondary);
+  --secondary-fg:var(--old-fg);
+  --muted:     var(--old-secondary);
+  --muted-fg:  var(--old-muted-fg);
+  --accent:    var(--old-secondary);
+  --accent-fg: var(--old-fg);
+  --border:    var(--old-border);
+  --input:     var(--old-border);
+  --ring:      var(--old-fg);
+  --radius:    0px;
+  --radius-lg: 0px;
+  --radius-sm: 0px;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+}
+
+/* ---------- 布局 ---------- */
+.layout { display:flex; height:calc(100vh - 40px); overflow:hidden; }
+
+/* 侧边栏 */
+.sidebar {
+  width:224px; flex-shrink:0;
+  background:var(--secondary);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow-y:auto;
+}
+.sidebar .section-title {
+  font-size:10px; text-transform:uppercase; letter-spacing:0.05em;
+  color:var(--muted-fg); padding:16px 16px 8px;
+  font-weight:600;
+}
+.sidebar .step {
+  display:flex; align-items:center; gap:8px;
+  min-height:44px; padding:8px 12px; margin:0 4px 2px;
+  font-size:13px; cursor:pointer; border-radius:var(--radius);
+  transition: all 150ms;
+  color:var(--muted-fg);
+}
+.sidebar .step:hover { background:var(--muted); color:var(--fg); }
+.sidebar .step.active { background:var(--primary); color:var(--primary-fg); }
+.sidebar .step.done { color:var(--fg); }
+.sidebar .step .num {
+  width:22px; height:22px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; border-radius:var(--radius-sm);
+  border:1px solid currentColor;
+}
+.sidebar .step.active .num { border-color:var(--primary-fg); }
+.sidebar .step.done .num { background:var(--fg); color:var(--card-bg); border-color:var(--fg); }
+body.old-mode .sidebar .step.done .num { background:var(--fg); color:var(--bg); }
+
+/* 内容区 */
+.content { flex:1; overflow-y:auto; padding:32px; }
+.section { margin-bottom:40px; }
+.section-title {
+  font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+  color:var(--muted-fg); margin-bottom:12px; font-weight:600;
+  padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+
+/* ---------- 组件演示 ---------- */
+.comp-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+.comp-label { font-size:11px; color:var(--muted-fg); width:80px; flex-shrink:0; }
+
+/* 按钮 */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  height:38px; padding:0 16px; font-size:13px; font-weight:500;
+  border-radius:var(--radius); cursor:pointer; border:none;
+  transition: all 150ms; font-family:inherit;
+}
+.btn-primary { background:var(--primary); color:var(--primary-fg); }
+.btn-primary:hover { filter:brightness(1.1); }
+.btn-secondary { background:var(--secondary); color:var(--secondary-fg); }
+.btn-secondary:hover { filter:brightness(0.97); }
+.btn-outline { background:transparent; color:var(--fg); border:1px solid var(--border); }
+.btn-outline:hover { background:var(--secondary); }
+.btn-ghost { background:transparent; color:var(--muted-fg); }
+.btn-ghost:hover { color:var(--fg); background:var(--secondary); }
+.btn-danger { background:var(--danger); color:#fff; }
+.btn-sm { height:30px; padding:0 12px; font-size:12px; }
+.btn-lg { height:44px; padding:0 20px; font-size:14px; }
+
+/* 输入框 */
+.input {
+  height:38px; padding:0 12px; font-size:13px; font-family:inherit;
+  border:1px solid var(--input); border-radius:var(--radius);
+  background:var(--card-bg); color:var(--fg);
+  outline:none; transition: all 150ms;
+}
+.input:focus { border-color:var(--ring); box-shadow:0 0 0 1px var(--ring); }
+.input::placeholder { color:var(--muted-fg); opacity:0.6; }
+
+/* 卡片 */
+.card {
+  border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--card-bg); padding:20px;
+  transition: all 200ms;
+}
+.card:hover { border-color:rgba(222,107,28,0.3); box-shadow:var(--shadow-sm); }
+body.old-mode .card:hover { border-color:var(--fg); box-shadow:none; }
+
+/* 统计卡片 */
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.stat-card {
+  border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--card-bg); padding:14px 16px;
+  text-align:center; transition: all 150ms;
+}
+.stat-card:hover { border-color:rgba(222,107,28,0.25); }
+.stat-card .num { font-size:20px; font-weight:700; }
+.stat-card .lbl { font-size:10px; color:var(--muted-fg); margin-top:2px; }
+
+/* 入口卡片 */
+.entry-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.entry-card {
+  border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--card-bg); padding:20px;
+  cursor:pointer; transition: all 200ms;
+  display:flex; align-items:center; justify-content:space-between;
+  position:relative; overflow:hidden;
+}
+.entry-card:hover { border-color:rgba(222,107,28,0.3); box-shadow:var(--shadow-sm); }
+.entry-card .icon-box {
+  width:36px; height:36px; flex-shrink:0;
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  display:flex; align-items:center; justify-content:center;
+  background:var(--secondary);
+  font-size:16px;
+}
+.entry-card .entry-body { margin-left:12px; flex:1; min-width:0; }
+.entry-card .entry-title { font-size:14px; font-weight:600; }
+.entry-card .entry-desc { font-size:12px; color:var(--muted-fg); margin-top:2px; }
+.entry-card .entry-cta {
+  font-size:12px; color:var(--muted-fg);
+  padding:4px 12px; border:1px solid var(--border); border-radius:var(--radius-sm);
+  flex-shrink:0; transition:all 150ms;
+}
+.entry-card:hover .entry-cta { background:var(--primary); color:var(--primary-fg); border-color:var(--primary); }
+body.old-mode .entry-card:hover .entry-cta { background:var(--fg); border-color:var(--fg); }
+.entry-card .new-badge {
+  position:absolute; top:0; right:0;
+  padding:2px 8px; font-size:10px; font-weight:700;
+  background:var(--primary); color:var(--primary-fg);
+  border-radius:0 0 0 var(--radius-sm);
+}
+
+/* Badge */
+.badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:2px 8px; font-size:11px; border-radius:var(--radius-sm);
+  border:1px solid; font-weight:500;
+}
+.badge-success { color:var(--success); border-color:rgba(22,163,74,0.3); background:rgba(22,163,74,0.06); }
+.badge-warning { color:var(--warning); border-color:rgba(217,119,6,0.3); background:rgba(217,119,6,0.06); }
+.badge-muted  { color:var(--muted-fg); border-color:var(--border); background:var(--muted); }
+
+/* 进度条 */
+.progress-bar {
+  height:6px; background:var(--muted); border-radius:3px; overflow:hidden;
+}
+.progress-bar .fill {
+  height:100%; border-radius:3px; background:var(--primary);
+  transition:width 400ms ease-out;
+}
+.progress-bar .fill.success { background:var(--success); }
+.progress-bar .fill.warning { background:var(--warning); }
+
+/* 作品卡片 */
+.novel-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.novel-card {
+  border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--card-bg); padding:20px; cursor:pointer;
+  position:relative; overflow:hidden;
+  transition: all 200ms;
+}
+.novel-card:hover { box-shadow:var(--shadow-sm); border-color:rgba(222,107,28,0.3); }
+body.old-mode .novel-card:hover { box-shadow:none; border-color:var(--fg); }
+.novel-card .status-bar {
+  position:absolute; left:0; top:0; bottom:0; width:4px;
+  border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+}
+.novel-card .status-bar.done { background:var(--success); }
+.novel-card .status-bar.progress { background:var(--warning); }
+.novel-card .status-bar.draft { background:var(--border); }
+.novel-card .novel-title { font-size:15px; font-weight:600; margin-bottom:12px; }
+.novel-card .novel-meta { font-size:12px; color:var(--muted-fg); line-height:1.8; margin-bottom:12px; }
+.novel-card .novel-header { display:flex; justify-content:space-between; align-items:flex-start; }
+
+/* 对比面板 */
+.compare-wrap { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.compare-col {
+  border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:20px; position:relative;
+}
+.compare-col .col-tag {
+  position:absolute; top:-10px; left:16px;
+  padding:2px 10px; font-size:10px; font-weight:700; border-radius:var(--radius-sm);
+}
+.compare-col.old .col-tag { background:var(--fg); color:var(--card-bg); }
+.compare-col.new .col-tag { background:var(--primary); color:#fff; }
+.compare-col.old { background:var(--old-bg); border-color:var(--old-border); border-radius:0; }
+.compare-col.old * { border-radius:0 !important; box-shadow:none !important; }
+
+/* 调色板 */
+.palette-grid { display:flex; gap:8px; flex-wrap:wrap; }
+.color-swatch {
+  width:72px; height:72px; border-radius:var(--radius);
+  border:1px solid var(--border); display:flex;
+  flex-direction:column; align-items:center; justify-content:center;
+  font-size:10px; gap:2px;
+}
+.color-swatch .swatch-hex { font-weight:600; font-size:11px; }
+.color-swatch .swatch-name { color:var(--muted-fg); }
+
+/* 暗色弹窗 mock */
+.dark-preview {
+  background:#100E0C; color:#EEEAE5; border-radius:var(--radius-lg);
+  padding:20px; border:1px solid #35312E;
+}
+.dark-preview .dark-card {
+  background:#1A1815; border:1px solid #35312E; border-radius:var(--radius);
+  padding:16px;
+}
+.dark-preview .dark-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 16px; border-radius:var(--radius);
+  background:#ED7D26; color:#fff; font-size:13px; font-weight:500;
+  border:none; cursor:pointer;
+}
+.dark-preview .dark-input {
+  height:36px; padding:0 12px; border:1px solid #35312E;
+  border-radius:var(--radius); background:#100E0C; color:#EEEAE5;
+  font-size:13px; font-family:inherit; outline:none;
+}
+.dark-preview .dark-muted { color:#8F8981; font-size:12px; }
+.dark-preview .dark-border { border-color:#35312E; }
+
+/* 动画 */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.animate-in { animation:fadeUp 400ms ease-out both; }
+.stagger-1 { animation-delay:50ms; }
+.stagger-2 { animation-delay:100ms; }
+.stagger-3 { animation-delay:150ms; }
+
+/* 滚动条 */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* 响应式预览标记 */
+@media (max-width:800px) {
+  .sidebar { display:none; }
+  .content { padding:16px; }
+}
+
+/* 提示框 */
+.tooltip {
+  position:fixed; bottom:24px; right:24px; z-index:100;
+  background:var(--card-bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:12px 16px;
+  box-shadow:var(--shadow-md); font-size:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.tooltip .dot { width:6px; height:6px; border-radius:50%; background:var(--primary); animation:pulse 2s infinite; }
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.4; }
+}
+</style>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<div class="topbar">
+  <div class="brand">
+    <span class="dot">🍅</span>
+    番茄小说创作助手
+  </div>
+  <span class="spacer"></span>
+  <span class="hint">UI 设计预览 · 文学温润风</span>
+  <button class="mode-toggle active" id="btnNew" onclick="document.body.classList.remove('old-mode');document.getElementById('btnNew').classList.add('active');document.getElementById('btnOld').classList.remove('active');">🎨 新版</button>
+  <button class="mode-toggle" id="btnOld" onclick="document.body.classList.add('old-mode');document.getElementById('btnOld').classList.add('active');document.getElementById('btnNew').classList.remove('active');">⬛ 旧版对照</button>
+</div>
+
+<div class="layout">
+
+<!-- 侧边栏 -->
+<aside class="sidebar">
+  <div class="section-title">导航</div>
+  <div class="step active">
+    <span class="num">🏠</span> 首页
+  </div>
+  <div class="section-title" style="margin-top:8px;">创作步骤</div>
+  <div class="step done"><span class="num">✓</span> 分类标签</div>
+  <div class="step done"><span class="num">✓</span> 核心爽点</div>
+  <div class="step active"><span class="num">3</span> 基础方案</div>
+  <div class="step"><span class="num">4</span> 详细规划</div>
+  <div class="step"><span class="num">5</span> 章节拆分</div>
+  <div class="step"><span class="num">6</span> 逐章写作</div>
+  <div class="step"><span class="num">7</span> 全文整合</div>
+</aside>
+
+<!-- 内容区 -->
+<main class="content">
+
+  <!-- ===== 色彩系统 ===== -->
+  <div class="section animate-in">
+    <div class="section-title">🎨 色彩系统</div>
+    <div class="compare-wrap">
+      <div class="compare-col new">
+        <div class="col-tag">新版 · 文学温润风</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <div class="color-swatch" style="background:#FAF7F4;"><span class="swatch-hex">#FAF7F4</span><span class="swatch-name">背景色</span></div>
+          <div class="color-swatch" style="background:#1A1512;"><span class="swatch-hex" style="color:#EEEAE5;">#1A1512</span><span class="swatch-name" style="color:#8F8981;">主文字</span></div>
+          <div class="color-swatch" style="background:#DE6B1C;"><span class="swatch-hex" style="color:#fff;">#DE6B1C</span><span class="swatch-name" style="color:rgba(255,255,255,0.7);">主色·暖橙</span></div>
+          <div class="color-swatch" style="background:#F2EEE9;"><span class="swatch-hex">#F2EEE9</span><span class="swatch-name">次级背景</span></div>
+          <div class="color-swatch" style="background:#DFD9D2;"><span class="swatch-hex">#DFD9D2</span><span class="swatch-name">边框色</span></div>
+          <div class="color-swatch" style="background:#7A736D;"><span class="swatch-hex" style="color:#fff;">#7A736D</span><span class="swatch-name" style="color:rgba(255,255,255,0.6);">弱化文字</span></div>
+        </div>
+        <div style="margin-top:12px; font-size:12px; color:var(--muted-fg);">
+          暖色基调 · 8%-15% 饱和度 · 纸张质感 · 适合长时间写作
+        </div>
+      </div>
+      <div class="compare-col old">
+        <div class="col-tag">旧版 · Lovart</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <div class="color-swatch" style="background:#FFFFFF; box-shadow:none;"><span class="swatch-hex">#FFFFFF</span><span class="swatch-name">背景色</span></div>
+          <div class="color-swatch" style="background:#000000; box-shadow:none;"><span class="swatch-hex" style="color:#fff;">#000000</span><span class="swatch-name" style="color:rgba(255,255,255,0.6);">主文字</span></div>
+          <div class="color-swatch" style="background:#000000; box-shadow:none;"><span class="swatch-hex" style="color:#fff;">#000000</span><span class="swatch-name" style="color:rgba(255,255,255,0.6);">主色·黑色</span></div>
+          <div class="color-swatch" style="background:#F5F5F5; box-shadow:none;"><span class="swatch-hex">#F5F5F5</span><span class="swatch-name">次级背景</span></div>
+          <div class="color-swatch" style="background:#E6E6E6; box-shadow:none;"><span class="swatch-hex">#E6E6E6</span><span class="swatch-name">边框色</span></div>
+          <div class="color-swatch" style="background:#737373; box-shadow:none;"><span class="swatch-hex" style="color:#fff;">#737373</span><span class="swatch-name" style="color:rgba(255,255,255,0.6);">弱化文字</span></div>
+        </div>
+        <div style="margin-top:12px; font-size:12px; color:var(--old-muted-fg);">
+          纯黑白 · 零饱和度 · 无圆角无阴影 · 代码编辑器风格
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 按钮组件 ===== -->
+  <div class="section animate-in stagger-1">
+    <div class="section-title">🔘 按钮</div>
+    <div class="compare-wrap">
+      <div class="compare-col new">
+        <div class="col-tag">新版</div>
+        <div class="comp-row"><span class="comp-label">Primary</span><button class="btn btn-primary">生成方案</button><button class="btn btn-primary btn-sm">紧凑</button></div>
+        <div class="comp-row"><span class="comp-label">Secondary</span><button class="btn btn-secondary">取消</button><button class="btn btn-secondary btn-sm">紧凑</button></div>
+        <div class="comp-row"><span class="comp-label">Outline</span><button class="btn btn-outline">返回上一步</button></div>
+        <div class="comp-row"><span class="comp-label">Ghost</span><button class="btn btn-ghost">帮助</button></div>
+        <div class="comp-row"><span class="comp-label">Danger</span><button class="btn btn-danger btn-sm">删除</button></div>
+      </div>
+      <div class="compare-col old">
+        <div class="col-tag">旧版</div>
+        <div class="comp-row"><span class="comp-label">Primary</span><button class="btn btn-primary">生成方案</button></div>
+        <div class="comp-row"><span class="comp-label">Secondary</span><button class="btn btn-secondary">取消</button></div>
+        <div class="comp-row"><span class="comp-label">Outline</span><button class="btn btn-outline">返回上一步</button></div>
+        <div class="comp-row"><span class="comp-label">Danger</span><button class="btn btn-danger btn-sm">删除</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 输入框 + Badge ===== -->
+  <div class="section animate-in stagger-2">
+    <div class="section-title">📝 输入框 & 标签</div>
+    <div class="compare-wrap">
+      <div class="compare-col new">
+        <div class="col-tag">新版</div>
+        <div class="comp-row"><span class="comp-label">搜索</span><input class="input" placeholder="搜索作品..." style="width:240px;"></div>
+        <div class="comp-row"><span class="comp-label">状态</span><span class="badge badge-success">已完成</span><span class="badge badge-warning">创作中</span><span class="badge badge-muted">草稿</span></div>
+      </div>
+      <div class="compare-col old">
+        <div class="col-tag">旧版</div>
+        <div class="comp-row"><span class="comp-label">搜索</span><input class="input" placeholder="搜索作品..." style="width:240px;"></div>
+        <div class="comp-row"><span class="comp-label">状态</span><span class="badge badge-success">已完成</span><span class="badge badge-warning">创作中</span><span class="badge badge-muted">草稿</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 首页仪表盘 ===== -->
+  <div class="section animate-in stagger-3">
+    <div class="section-title">📊 首页仪表盘</div>
+
+    <!-- 标题 + 统计 -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px;">
+      <div>
+        <div style="font-size:20px; font-weight:700; margin-bottom:4px;">下午好 👋</div>
+        <div style="font-size:13px; color:var(--muted-fg);">番茄小说创作工作台</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num">12</div><div class="lbl">全部作品</div></div>
+        <div class="stat-card"><div class="num">3</div><div class="lbl">已完成</div></div>
+        <div class="stat-card"><div class="num">5</div><div class="lbl">创作中</div></div>
+        <div class="stat-card"><div class="num">48.2万字</div><div class="lbl">累计字数</div></div>
+      </div>
+    </div>
+
+    <!-- 创作入口 -->
+    <div class="entry-grid" style="margin-bottom:28px;">
+      <div class="entry-card">
+        <div style="display:flex; align-items:center;">
+          <div class="icon-box">📝</div>
+          <div class="entry-body">
+            <div class="entry-title">创建短篇小说</div>
+            <div class="entry-desc">手动配置分类→爽点→方案...</div>
+          </div>
+        </div>
+        <span class="entry-cta">开始</span>
+      </div>
+      <div class="entry-card">
+        <div style="display:flex; align-items:center;">
+          <div class="icon-box">🎲</div>
+          <div class="entry-body">
+            <div class="entry-title">一键随机创作</div>
+            <div class="entry-desc">随机组合预置要素快速启动</div>
+          </div>
+        </div>
+        <span class="entry-cta">开始</span>
+      </div>
+      <div class="entry-card">
+        <span class="new-badge">NEW</span>
+        <div style="display:flex; align-items:center;">
+          <div class="icon-box" style="background:#FFF7ED; border-color:rgba(222,107,28,0.2);">🔥</div>
+          <div class="entry-body">
+            <div class="entry-title">紧跟时事创作</div>
+            <div class="entry-desc">AI分析热点→自动生成创作建议</div>
+          </div>
+        </div>
+        <span class="entry-cta">开始</span>
+      </div>
+    </div>
+
+    <!-- 作品列表 -->
+    <div style="display:flex; gap:8px; margin-bottom:16px;">
+      <button class="btn btn-primary btn-sm">全部</button>
+      <button class="btn btn-outline btn-sm">创作中</button>
+      <button class="btn btn-outline btn-sm">已完成</button>
+      <button class="btn btn-outline btn-sm">草稿</button>
+    </div>
+
+    <div class="novel-grid">
+      <!-- 作品卡片 1 -->
+      <div class="novel-card"><span class="status-bar progress"></span>
+        <div class="novel-header">
+          <span class="novel-title">重生之都市修仙</span>
+          <span class="badge badge-warning">创作中</span>
+        </div>
+        <div class="novel-meta">男频 · 都市 · 3.2万字</div>
+        <div class="progress-bar"><div class="fill warning" style="width:60%;"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted-fg); margin-top:6px;">
+          <span>进度 4/7 步</span><span style="color:var(--warning);">60%</span>
+        </div>
+      </div>
+      <!-- 作品卡片 2 -->
+      <div class="novel-card"><span class="status-bar done"></span>
+        <div class="novel-header">
+          <span class="novel-title">女总裁的贴身高手</span>
+          <span class="badge badge-success">已完成</span>
+        </div>
+        <div class="novel-meta">男频 · 都市 · 8.5万字</div>
+        <div class="progress-bar"><div class="fill success" style="width:100%;"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted-fg); margin-top:6px;">
+          <span>进度 7/7 步</span><span style="color:var(--success);">100%</span>
+        </div>
+      </div>
+      <!-- 作品卡片 3 -->
+      <div class="novel-card"><span class="status-bar draft"></span>
+        <div class="novel-header">
+          <span class="novel-title">穿越古代当神医</span>
+          <span class="badge badge-muted">草稿</span>
+        </div>
+        <div class="novel-meta">女频 · 古言 · 0 字</div>
+        <div class="progress-bar"><div class="fill" style="width:5%; opacity:0.3;"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted-fg); margin-top:6px;">
+          <span>进度 0/7 步</span><span>5%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 暗色模式预览 ===== -->
+  <div class="section animate-in stagger-3">
+    <div class="section-title">🌙 暗色模式</div>
+    <div class="dark-preview">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <span style="font-weight:700; font-size:15px;">🍅 番茄小说</span>
+        <span style="flex:1;"></span>
+        <span class="dark-muted">夜灯书案</span>
+      </div>
+      <div style="display:flex; gap:16px;">
+        <div style="flex:1;">
+          <div class="dark-card" style="margin-bottom:12px;">
+            <div style="font-weight:600; margin-bottom:8px;">创作进度</div>
+            <div style="display:flex; gap:12px;">
+              <div><span style="font-size:18px; font-weight:700;">4</span><br><span class="dark-muted">进行中</span></div>
+              <div><span style="font-size:18px; font-weight:700;">2</span><br><span class="dark-muted">已完成</span></div>
+              <div><span style="font-size:18px; font-weight:700;">12.5万</span><br><span class="dark-muted">总字数</span></div>
+            </div>
+          </div>
+          <div class="dark-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-weight:600;">重生之都市修仙</span>
+              <span style="font-size:11px; color:#D97706; border:1px solid rgba(217,119,6,0.3); padding:1px 6px; border-radius:3px;">创作中</span>
+            </div>
+            <div style="height:4px; background:#35312E; border-radius:2px; margin-bottom:8px;">
+              <div style="width:60%; height:100%; background:#ED7D26; border-radius:2px;"></div>
+            </div>
+            <span class="dark-muted">3.2万字 · 4/7 步 · 60%</span>
+            <div style="margin-top:12px; display:flex; gap:8px;">
+              <span class="dark-btn">继续写作</span>
+              <span style="display:inline-flex; align-items:center; height:36px; padding:0 16px; border:1px solid #35312E; border-radius:6px; font-size:13px; cursor:pointer; color:#8F8981;">导出</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;">
+          <div class="dark-card" style="margin-bottom:12px;">
+            <div style="font-weight:600; margin-bottom:8px;">搜索作品</div>
+            <input class="dark-input" placeholder="输入作品名称..." style="width:100%;">
+          </div>
+          <div class="dark-card">
+            <div style="font-weight:600; margin-bottom:8px;">快捷操作</div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="padding:8px 10px; border-radius:6px; cursor:pointer; transition:background 150ms; font-size:13px;" onmouseover="this.style.background='#262320'" onmouseout="this.style.background='transparent'">📝 新建作品</div>
+              <div style="padding:8px 10px; border-radius:6px; cursor:pointer; transition:background 150ms; font-size:13px;" onmouseover="this.style.background='#262320'" onmouseout="this.style.background='transparent'">🔥 紧跟时事</div>
+              <div style="padding:8px 10px; border-radius:6px; cursor:pointer; transition:background 150ms; font-size:13px;" onmouseover="this.style.background='#262320'" onmouseout="this.style.background='transparent'">⚙️ 设置</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 设计核心变化 ===== -->
+  <div class="section animate-in stagger-3">
+    <div class="section-title">📋 设计核心变化总结</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:24px; margin-bottom:8px;">🎨</div>
+        <div style="font-weight:600; margin-bottom:4px;">暖色底色</div>
+        <div style="font-size:12px; color:var(--muted-fg);">#FAF7F4 替代 #FFFFFF<br>降低长时写作视觉疲劳</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:24px; margin-bottom:8px;">🍊</div>
+        <div style="font-weight:600; margin-bottom:4px;">品牌主色</div>
+        <div style="font-size:12px; color:var(--muted-fg);">暖橙 #DE6B1C 融入品牌基因<br>替代纯黑作为功能强调色</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:24px; margin-bottom:8px;">📐</div>
+        <div style="font-weight:600; margin-bottom:4px;">微妙软化</div>
+        <div style="font-size:12px; color:var(--muted-fg);">6px 圆角 + 克制阴影<br>布局容器保持直角结构</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- 提示 -->
+<div class="tooltip">
+  <span class="dot"></span>
+  <span>点击右上角 <b>"旧版对照"</b> 切换查看 Lovart 风格对比</span>
+</div>
+
+<script>
+// 提示自动消失
+setTimeout(() => {
+  const tip = document.querySelector('.tooltip');
+  if (tip) { tip.style.opacity = '0'; tip.style.transition = 'opacity 500ms'; }
+}, 8000);
+</script>
+
+</body>
+</html>

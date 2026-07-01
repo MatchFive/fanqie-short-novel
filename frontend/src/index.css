@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   文学温润风 (Literary Warmth) — 暖白底色 + 暖橙主色
+   微妙圆角 + 极克制阴影 + 亮暗双模
+   设计文档: docs/ui-redesign-plan.md
+   ============================================ */
+
+@layer base {
+  /* ── 亮色模式：「晨曦书房」 ── */
+  :root {
+    --background: 30 15% 98%;           /* #FAF7F4 — 暖白（旧纸质感） */
+    --foreground: 30 15% 8%;            /* #1A1512 — 暖黑 */
+    --card: 30 20% 100%;                /* #FFFFFF — 卡片表面 */
+    --card-foreground: 30 15% 8%;       /* #1A1512 */
+    --popover: 30 20% 100%;             /* #FFFFFF */
+    --popover-foreground: 30 15% 8%;    /* #1A1512 */
+    --primary: 22 82% 48%;              /* #DE6B1C — 暖橙（品牌番茄色） */
+    --primary-foreground: 0 0% 100%;    /* #FFFFFF */
+    --secondary: 30 10% 94%;            /* #F2EEE9 — 暖灰 */
+    --secondary-foreground: 30 10% 18%; /* #2F2A26 */
+    --muted: 30 8% 94%;                 /* #F1EDE9 */
+    --muted-foreground: 30 5% 46%;      /* #7A736D — 暖灰文字 */
+    --accent: 22 30% 94%;               /* #F5EDE5 */
+    --accent-foreground: 22 70% 35%;    /* #B85A14 */
+    --destructive: 0 72% 48%;           /* #DC2626 — 危险操作 */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+    --border: 30 8% 86%;                /* #DFD9D2 */
+    --input: 30 8% 86%;                 /* #DFD9D2 */
+    --ring: 22 82% 48%;                 /* #DE6B1C — 聚焦环 */
+    --radius: 0.5rem;                   /* 8px 基准圆角 */
+  }
+
+  /* ── 暗色模式：「夜灯书案」 ── */
+  .dark {
+    --background: 30 8% 6%;             /* #100E0C — 暖黑 */
+    --foreground: 30 12% 92%;           /* #EEEAE5 */
+    --card: 30 6% 9%;                   /* #1A1815 */
+    --card-foreground: 30 12% 92%;      /* #EEEAE5 */
+    --popover: 30 6% 9%;                /* #1A1815 */
+    --popover-foreground: 30 12% 92%;   /* #EEEAE5 */
+    --primary: 25 85% 55%;              /* #ED7D26 — 暗色下稍亮 */
+    --primary-foreground: 0 0% 100%;    /* #FFFFFF */
+    --secondary: 30 6% 14%;             /* #262320 */
+    --secondary-foreground: 30 10% 85%; /* #DED8D0 */
+    --muted: 30 6% 14%;                 /* #262320 */
+    --muted-foreground: 30 5% 55%;      /* #8F8981 */
+    --accent: 25 15% 18%;               /* #302923 */
+    --accent-foreground: 25 70% 60%;    /* #E8944D */
+    --destructive: 0 72% 48%;           /* #DC2626 */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+    --border: 30 5% 20%;                /* #35312E */
+    --input: 30 5% 20%;                 /* #35312E */
+    --ring: 25 85% 55%;                 /* #ED7D26 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
+      sans-serif;
+  }
+}

@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>番茄小说创作工具 - 全部页面 Mockup</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --fg: #000000;
+    --border: #E6E6E6;
+    --muted: #737373;
+    --secondary: #F5F5F5;
+    --hover: #FAFAFA;
+    --primary: #000000;
+    --primary-fg: #FFFFFF;
+    --accent: #F5F5F5;
+    --accent-fg: #000000;
+    --danger: #DC2626;
+    --success: #16A34A;
+    --warning: #D97706;
+    --warning-bg: #FFFBEB;
+    --info: #2563EB;
+    --info-bg: #EFF6FF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header tabs */
+  .header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--secondary);
+    padding: 0 16px;
+    height: 40px;
+    flex-shrink: 0;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .header .brand {
+    font-weight: 700;
+    font-size: 13px;
+    margin-right: 16px;
+    white-space: nowrap;
+  }
+  .tab-btn {
+    padding: 6px 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: var(--fg); }
+  .tab-btn.active { color: var(--fg); border-bottom-color: var(--fg); font-weight: 600; }
+  
+  /* Main content area */
+  .main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    background: var(--secondary);
+  }
+  .sidebar-section {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-section:last-child { border-bottom: none; }
+  .sidebar-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .sidebar-item {
+    padding: 6px 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .sidebar-item:hover { background: var(--hover); }
+  .sidebar-item.active { background: var(--fg); color: var(--primary-fg); }
+  .sidebar-item .step-num {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .sidebar-item.active .step-num { border-color: var(--primary-fg); }
+  .sidebar-item.done .step-num { background: var(--fg); color: var(--primary-fg); border-color: var(--fg); }
+  .sidebar-item.done .step-num::after { content: '✓'; }
+  .sidebar-item.done .step-num span { display: none; }
+  
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+  }
+  
+  /* Page container */
+  .page {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 32px;
+    display: none;
+  }
+  .page.active { display: block; }
+  
+  /* Common components */
+  .page-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .page-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .card {
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+    background: var(--bg);
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-title .required { color: var(--danger); font-size: 12px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .card-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  
+  .btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--fg);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--hover); }
+  .btn.primary { background: var(--fg); color: var(--primary-fg); border-color: var(--fg); }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn.danger { border-color: var(--danger); color: var(--danger); }
+  .btn.danger:hover { background: var(--danger); color: white; }
+  .btn.dashed { border-style: dashed; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn.sm { padding: 4px 10px; font-size: 12px; }
+  
+  .input {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    width: 100%;
+    font-family: inherit;
+    outline: none;
+  }
+  .input:focus { border-color: var(--fg); }
+  
+  .select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    background: var(--bg);
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+    width: 100%;
+  }
+  .select:focus { border-color: var(--fg); }
+  
+  .textarea {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    width: 100%;
+    resize: vertical;
+    font-family: inherit;
+    outline: none;
+    min-height: 80px;
+  }
+  .textarea:focus { border-color: var(--fg); }
+  
+  .range-wrap { display: flex; align-items: center; gap: 12px; }
+  .range-wrap input[type="range"] { flex: 1; accent-color: var(--fg); }
+  .range-wrap .value { min-width: 60px; text-align: right; font-size: 13px; font-weight: 600; }
+  
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    margin: 2px;
+  }
+  .badge.selected { background: var(--fg); color: var(--primary-fg); border-color: var(--fg); }
+  .badge.clickable { cursor: pointer; }
+  .badge.clickable:hover { border-color: var(--fg); }
+  .badge .close { margin-left: 4px; cursor: pointer; font-size: 14px; line-height: 1; opacity: 0.5; }
+  .badge .close:hover { opacity: 1; }
+  .badge.green { border-color: var(--success); color: var(--success); }
+  .badge.red { border-color: var(--danger); color: var(--danger); }
+  .badge.yellow { border-color: var(--warning); color: var(--warning); }
+  .badge.blue { border-color: var(--info); color: var(--info); }
+  
+  .stat-card {
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    background: var(--bg);
+  }
+  .stat-card .stat-num { font-size: 28px; font-weight: 700; }
+  .stat-card .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  
+  .progress-bar {
+    height: 4px;
+    background: var(--secondary);
+    width: 100%;
+  }
+  .progress-fill { height: 100%; background: var(--fg); }
+  
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 24px;
+  }
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .step-dot.active { border-color: var(--fg); background: var(--fg); color: var(--primary-fg); }
+  .step-dot.done { border-color: var(--fg); background: var(--fg); color: var(--primary-fg); }
+  .step-line { height: 2px; background: var(--border); flex: 1; min-width: 24px; }
+  .step-line.done { background: var(--fg); }
+  
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .tabs .tab {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+  }
+  .tabs .tab:hover { color: var(--fg); }
+  .tabs .tab.active { color: var(--fg); border-bottom-color: var(--fg); font-weight: 600; }
+  
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+  }
+  .empty-state p { margin-bottom: 12px; }
+  
+  .info-box {
+    padding: 12px 16px;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  
+  .separator {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+  
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .gap-24 { gap: 24px; }
+  .grow { flex: 1; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .w-full { width: 100%; }
+  .text-sm { font-size: 12px; }
+  .text-muted { color: var(--muted); }
+  .font-semibold { font-weight: 600; }
+  .text-right { text-align: right; }
+
+  /* ── Step 1: Category Page (redesigned) ── */
+  #page-categories { padding: 0; display: none; flex-direction: column; overflow: hidden; }
+  #page-categories.active { display: flex !important; }
+  #page-categories .step-indicator { padding: 12px 24px 0; margin-bottom: 0; flex-shrink: 0; }
+  #page-categories > div:first-of-type + div { padding: 8px 24px 0; flex-shrink: 0; }
+  #page-categories .cat-layout { display: flex; gap: 0; flex: 1; overflow: hidden; }
+  #page-categories .cat-left { flex: 1; min-width: 0; overflow-y: auto; padding: 10px 14px 60px; }
+  #page-categories .cat-right {
+    width: 300px; flex-shrink: 0; padding: 12px 16px 60px;
+    overflow-y: auto; background: var(--bg); border-left: 1px solid var(--border);
+  }
+  #page-categories .cat-section { background: var(--bg); border: 1px solid var(--border); margin-bottom: 8px; }
+  #page-categories .cat-section-hd {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 10px; border-bottom: 1px solid var(--border);
+  }
+  #page-categories .cat-section-hd .cat-title { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  #page-categories .cat-section-bd { padding: 6px 10px; }
+  #page-categories .cat-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  #page-categories .cat-row .cat-section { flex: 1; margin-bottom: 0; }
+
+  /* chips */
+  #page-categories .chip-grid { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  #page-categories .chip {
+    display: inline-flex; align-items: center; gap: 2px;
+    padding: 3px 9px; font-size: 11px; border: 1px solid var(--border);
+    background: var(--bg); cursor: pointer; user-select: none; white-space: nowrap;
+    transition: all 0.12s;
+  }
+  #page-categories .chip:hover { border-color: var(--fg); background: var(--secondary); }
+  #page-categories .chip.selected { border-color: var(--fg); color: var(--bg); background: var(--fg); }
+  #page-categories .chip .lvl2 { font-size: 8px; color: var(--muted); display: block; line-height: 1.1; }
+  #page-categories .chip.selected .lvl2 { color: rgba(255,255,255,0.6); }
+
+  /* main category color */
+  #page-categories .chip-main { font-size: 12px; padding: 4px 12px; font-weight: 500; }
+  #page-categories .chip-main.male { border-color: #5B8DEF; }
+  #page-categories .chip-main.male.selected { background: #5B8DEF; border-color: #5B8DEF; color: #fff; }
+  #page-categories .chip-main.female { border-color: #E87D9F; }
+  #page-categories .chip-main.female.selected { background: #E87D9F; border-color: #E87D9F; color: #fff; }
+  #page-categories .chip-main.common { border-color: #6BAF6B; }
+  #page-categories .chip-main.common.selected { background: #6BAF6B; border-color: #6BAF6B; color: #fff; }
+
+  /* legend */
+  #page-categories .cat-legend { display: inline-flex; gap: 6px; align-items: center; margin-left: 4px; }
+  #page-categories .cat-legend-it { display: inline-flex; align-items: center; gap: 2px; font-size: 9px; font-weight: 400; color: var(--muted); }
+  #page-categories .cat-legend-dot { width: 6px; height: 6px; display: inline-block; }
+  #page-categories .cat-legend-dot.male { background: #5B8DEF; }
+  #page-categories .cat-legend-dot.female { background: #E87D9F; }
+  #page-categories .cat-legend-dot.common { background: #6BAF6B; }
+
+  /* tools */
+  #page-categories .cat-tools { display: flex; gap: 4px; align-items: center; }
+  #page-categories .cat-search {
+    background: var(--bg); border: 1px solid var(--border); color: var(--fg);
+    padding: 3px 7px; font-size: 11px; outline: none; width: 100px;
+  }
+  #page-categories .cat-search:focus { border-color: var(--muted); }
+  #page-categories .cat-select {
+    background: var(--bg); border: 1px solid var(--border); color: var(--fg);
+    padding: 3px 5px; font-size: 11px; outline: none; cursor: pointer;
+  }
+  #page-categories .btn-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 22px; padding: 0 7px; font-size: 10px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--muted); cursor: pointer; transition: all 0.12s;
+  }
+  #page-categories .btn-icon:hover { border-color: var(--fg); color: var(--fg); background: var(--secondary); }
+  #page-categories .btn-icon.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  /* manage mode */
+  #page-categories .manage-mode .chip { cursor: grab; }
+  #page-categories .manage-mode .chip.dragging { opacity: 0.35; }
+  #page-categories .chip .drag-hd { display: none; color: var(--muted); font-size: 10px; margin-right: 1px; cursor: grab; }
+  #page-categories .manage-mode .chip .drag-hd { display: inline; }
+  #page-categories .chip .del-btn { display: none; color: var(--danger); font-size: 11px; cursor: pointer; margin-left: 2px; }
+  #page-categories .manage-mode .chip .del-btn { display: inline; }
+
+  /* add */
+  #page-categories .add-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; color: var(--muted); cursor: pointer;
+    font-size: 15px; border: 1px dashed var(--border); background: transparent; transition: all 0.12s;
+  }
+  #page-categories .add-btn:hover { border-color: var(--muted); color: var(--fg); }
+  #page-categories .inline-add { display: flex; gap: 4px; align-items: center; margin-top: 4px; }
+  #page-categories .inline-add input {
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); padding: 3px 7px; font-size: 11px; outline: none; min-width: 80px;
+  }
+  #page-categories .inline-add input:focus { border-color: var(--fg); }
+  #page-categories .inline-add select { background: var(--bg); border: 1px solid var(--border); color: var(--fg); padding: 3px 5px; font-size: 11px; outline: none; }
+  #page-categories .btn-xs {
+    border: 1px solid var(--border); padding: 3px 7px; font-size: 10px;
+    cursor: pointer; background: var(--bg); color: var(--fg);
+  }
+  #page-categories .btn-xs.confirm:hover { border-color: #16A34A; color: #16A34A; }
+  #page-categories .btn-xs.cancel:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* right panel */
+  #page-categories .cat-right-hd {
+    display: flex; align-items: center; gap: 5px; margin-bottom: 12px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  #page-categories .cat-right-hd h3 { font-size: 13px; font-weight: 600; }
+  #page-categories .cat-right-hd .count {
+    font-size: 10px; color: var(--muted); margin-left: auto;
+    background: var(--bg); padding: 1px 6px; border: 1px solid var(--border);
+  }
+  #page-categories .sel-group { margin-bottom: 10px; }
+  #page-categories .sel-group-header {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 5px;
+  }
+  #page-categories .sel-tag {
+    display: inline-flex; align-items: center; gap: 2px;
+    padding: 1px 7px; font-size: 10px; margin: 0 2px 3px 0;
+    border: 1px solid; white-space: nowrap; background: rgba(0,0,0,0.03);
+  }
+  #page-categories .sel-tag .sel-tag-x { cursor: pointer; font-size: 10px; opacity: 0.5; }
+  #page-categories .sel-tag .sel-tag-x:hover { opacity: 1; }
+  #page-categories .sel-tag.src-male    { border-color: #5B8DEF; color: #5B8DEF; }
+  #page-categories .sel-tag.src-female  { border-color: #E87D9F; color: #E87D9F; }
+  #page-categories .sel-tag.src-common  { border-color: #6BAF6B; color: #6BAF6B; }
+  #page-categories .sel-tag.src-plot    { border-color: #e67e22; color: #e67e22; }
+  #page-categories .sel-tag.src-char    { border-color: #1abc9c; color: #1abc9c; }
+  #page-categories .sel-tag.src-emotion { border-color: #9b59b6; color: #9b59b6; }
+  #page-categories .sel-tag.src-bg      { border-color: #7f8c8d; color: #7f8c8d; }
+  #page-categories .sel-tag.src-custom  { border-color: #f39c12; color: #f39c12; }
+
+  #page-categories .empty-hint { font-size: 10px; color: var(--muted); font-style: italic; padding: 2px 0; }
+
+  /* toast */
+  .cat-toast {
+    position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 7px 18px; font-size: 11px; z-index: 300;
+    animation: ctIn 0.2s ease-out; display: none;
+  }
+  @keyframes ctIn { from { opacity: 0; transform: translateX(-50%) translateY(5px); } }
+</style>
+</head>
+<body>
+
+<!-- Header Tabs -->
+<div class="header">
+  <span class="brand">🍅 番茄小说</span>
+  <button class="tab-btn active" data-page="home">🏠 首页</button>
+  <button class="tab-btn" data-page="create">📝 创建</button>
+  <button class="tab-btn" data-page="categories">① 分类</button>
+  <button class="tab-btn" data-page="hook">② 爽点</button>
+  <button class="tab-btn" data-page="plans">③ 方案</button>
+  <button class="tab-btn" data-page="plan">④ 规划</button>
+  <button class="tab-btn" data-page="chapters">⑤ 章节</button>
+  <button class="tab-btn" data-page="write">⑥ 写作</button>
+  <button class="tab-btn" data-page="integrate">⑦ 整合</button>
+  <button class="tab-btn" data-page="settings">⚙ 设置</button>
+  <button class="tab-btn" data-page="export">📦 导出</button>
+</div>
+
+<!-- Main Layout -->
+<div class="main">
+
+<!-- Sidebar Navigation -->
+<div class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">作品列表</div>
+    <div class="sidebar-item active">
+      <span style="width:4px;height:4px;background:var(--success);display:inline-block;flex-shrink:0;"></span>
+      都市之最强赘婿
+    </div>
+    <div class="sidebar-item">
+      <span style="width:4px;height:4px;background:var(--warning);display:inline-block;flex-shrink:0;"></span>
+      异界炼丹师
+    </div>
+    <div class="sidebar-item">
+      <span style="width:4px;height:4px;background:var(--border);display:inline-block;flex-shrink:0;"></span>
+      末日重生录
+    </div>
+    <div class="sidebar-item" style="color:var(--muted);">+ 新建作品</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">创作步骤</div>
+    <div class="sidebar-item done"><span class="step-num"><span>1</span></span> 分类标签</div>
+    <div class="sidebar-item done"><span class="step-num"><span>2</span></span> 核心爽点</div>
+    <div class="sidebar-item done"><span class="step-num"><span>3</span></span> 基础方案</div>
+    <div class="sidebar-item active"><span class="step-num"><span>4</span></span> 详细规划</div>
+    <div class="sidebar-item"><span class="step-num"><span>5</span></span> 章节拆分</div>
+    <div class="sidebar-item"><span class="step-num"><span>6</span></span> 逐章写作</div>
+    <div class="sidebar-item"><span class="step-num"><span>7</span></span> 全文整合</div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="sidebar-item">⚙ 设置</div>
+    <div class="sidebar-item">📦 导出数据</div>
+  </div>
+</div>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div class="page active" id="page-home">
+  <div style="margin-bottom: 28px;">
+    <div class="page-title">下午好 👋</div>
+    <div class="page-subtitle">番茄小说创作工作台</div>
+  </div>
+  
+  <div class="card-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 28px;">
+    <div class="stat-card">
+      <div class="stat-num">12</div>
+      <div class="stat-label">全部作品</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">3</div>
+      <div class="stat-label">已完成</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">5</div>
+      <div class="stat-label">创作中</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">48.2<span style="font-size:14px;font-weight:400;"> 万字</span></div>
+      <div class="stat-label">累计字数</div>
+    </div>
+  </div>
+  
+  <div class="flex items-center justify-between mb-16">
+    <div class="flex gap-8">
+      <button class="btn sm" style="background:var(--fg);color:var(--primary-fg);">全部</button>
+      <button class="btn sm">创作中</button>
+      <button class="btn sm">已完成</button>
+      <button class="btn sm">草稿</button>
+    </div>
+    <div class="flex gap-8 items-center">
+      <input class="input" placeholder="搜索作品..." style="width:200px;">
+      <button class="btn primary">+ 新建作品</button>
+    </div>
+  </div>
+  
+  <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <!-- Novel Card 1 -->
+    <div class="card" style="padding: 0; overflow: hidden; cursor: pointer;">
+      <div style="height: 100px; background: var(--fg); display: flex; align-items: center; justify-content: center; position: relative;">
+        <span style="color: var(--primary-fg); font-weight: 700; font-size: 18px;">都市之最强赘婿</span>
+      </div>
+      <div style="padding: 16px;">
+        <div class="flex justify-between items-center mb-8">
+          <span class="font-semibold">都市之最强赘婿</span>
+          <span class="badge green">已完成</span>
+        </div>
+        <div class="text-sm text-muted mb-8">都市 · 脑洞 ｜ 15.6万字 ｜ 2025/06/28</div>
+        <div class="mb-8 flex gap-4">
+          <span class="badge blue">身份反转</span>
+          <span class="badge blue">先婚后爱</span>
+        </div>
+        <div class="progress-bar mb-8"><div class="progress-fill" style="width:100%;"></div></div>
+        <div class="flex justify-between text-sm text-muted"><span>7/7 步骤</span><span>100%</span></div>
+      </div>
+    </div>
+    
+    <!-- Novel Card 2 -->
+    <div class="card" style="padding: 0; overflow: hidden; cursor: pointer;">
+      <div style="height: 100px; background: var(--secondary); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border);">
+        <span style="color: var(--fg); font-weight: 700; font-size: 18px;">异界炼丹师</span>
+      </div>
+      <div style="padding: 16px;">
+        <div class="flex justify-between items-center mb-8">
+          <span class="font-semibold">异界炼丹师</span>
+          <span class="badge yellow">创作中</span>
+        </div>
+        <div class="text-sm text-muted mb-8">玄幻 · 升级 ｜ 8.3万字 ｜ 2025/06/25</div>
+        <div class="mb-8 flex gap-4">
+          <span class="badge blue">扮猪吃虎</span>
+          <span class="badge blue">逆袭打脸</span>
+        </div>
+        <div class="progress-bar mb-8"><div class="progress-fill" style="width:71%;"></div></div>
+        <div class="flex justify-between text-sm text-muted"><span>5/7 步骤</span><span>71%</span></div>
+      </div>
+    </div>
+    
+    <!-- Novel Card 3 -->
+    <div class="card" style="padding: 0; overflow: hidden; cursor: pointer;">
+      <div style="height: 100px; background: var(--hover); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border);">
+        <span style="color: var(--fg); font-weight: 700; font-size: 18px;">末日重生录</span>
+      </div>
+      <div style="padding: 16px;">
+        <div class="flex justify-between items-center mb-8">
+          <span class="font-semibold">末日重生录</span>
+          <span class="badge" style="border-color:var(--muted);color:var(--muted);">草稿</span>
+        </div>
+        <div class="text-sm text-muted mb-8">科幻 · 末世 ｜ 2.1万字 ｜ 2025/06/20</div>
+        <div class="mb-8 flex gap-4">
+          <span class="badge blue">重生逆袭</span>
+          <span class="badge blue">系统流</span>
+        </div>
+        <div class="progress-bar mb-8"><div class="progress-fill" style="width:28%;"></div></div>
+        <div class="flex justify-between text-sm text-muted"><span>2/7 步骤</span><span>28%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CREATE PAGE ==================== -->
+<div class="page" id="page-create">
+  <div class="page-title">创作新作品</div>
+  <div class="page-subtitle">选择一种方式开始你的故事</div>
+  
+  <div class="card-grid-2" style="margin-top:24px;">
+    <!-- Manual Create -->
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 16px;">📖</div>
+      <div class="card-title" style="font-size:16px;">创建短篇小说</div>
+      <div class="mb-16">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">作品名称（可选）</label>
+        <input class="input" placeholder="输入作品名称...">
+      </div>
+      <div class="text-sm text-muted mb-16">AI 将引导你完成 7 步创作流程，从分类到导出</div>
+      <button class="btn primary" style="width:100%; justify-content:center;">
+        开始创作 →
+      </button>
+    </div>
+    
+    <!-- Random Create -->
+    <div class="card" style="border-style: dashed;">
+      <div style="font-size: 32px; margin-bottom: 16px;">🎲</div>
+      <div class="card-title" style="font-size:16px;">一键随机创作</div>
+      <div style="margin-bottom: 12px; font-size:13px; display:flex; flex-direction:column; gap:6px;">
+        <span style="color:var(--muted);">→ 随机搭配爽点 + 角色 + 背景</span>
+        <span style="color:var(--muted);">→ 自动生成 3 个故事方案</span>
+        <span style="color:var(--muted);">→ 快速进入写作环节</span>
+      </div>
+      <button class="btn primary" style="width:100%; justify-content:center; margin-top: 16px;">
+        🎲 开始随机创作
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CATEGORIES PAGE (Redesigned) ==================== -->
+<div class="page" id="page-categories">
+  <div class="step-indicator">
+    <div class="step-dot active">1</div><div class="step-line"></div>
+    <div class="step-dot">2</div><div class="step-line"></div>
+    <div class="step-dot">3</div><div class="step-line"></div>
+    <div class="step-dot">4</div><div class="step-line"></div>
+    <div class="step-dot">5</div><div class="step-line"></div>
+    <div class="step-dot">6</div><div class="step-line"></div>
+    <div class="step-dot">7</div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+    <div>
+      <div class="page-title" style="margin-bottom:2px;">Step 1: 故事分类与标签</div>
+      <div style="font-size:11px;color:var(--muted);">选择分类、角色、情绪和背景设定</div>
+    </div>
+    <button class="btn primary" onclick="catHandleSave()" style="padding:6px 14px;font-size:12px;">💾 保存并下一步</button>
+  </div>
+
+  <div class="cat-layout">
+    <!-- LEFT PANEL -->
+    <div class="cat-left">
+
+      <!-- ❶ 主分类 -->
+      <div class="cat-section">
+        <div class="cat-section-hd">
+          <span class="cat-title">
+            主分类
+            <span class="cat-legend">
+              <span class="cat-legend-it"><span class="cat-legend-dot male"></span>男频</span>
+              <span class="cat-legend-it"><span class="cat-legend-dot female"></span>女频</span>
+              <span class="cat-legend-it"><span class="cat-legend-dot common"></span>通用</span>
+            </span>
+          </span>
+          <span style="font-size:10px;color:var(--muted);">单选</span>
+        </div>
+        <div class="cat-section-bd"><div class="chip-grid" id="cMainGrid"></div></div>
+      </div>
+
+      <!-- ❷ 情节分类 -->
+      <div class="cat-section">
+        <div class="cat-section-hd">
+          <span class="cat-title">情节分类</span>
+          <div class="cat-tools">
+            <input class="cat-search" placeholder="搜索..." id="cPlotSearch" oninput="cRenderPlot()">
+            <select class="cat-select" id="cPlotFilter" onchange="cRenderPlot()"><option value="">全部</option></select>
+            <button class="btn-icon" id="cPlotManageBtn" onclick="cTogglePlotManage()">⚙ 管理</button>
+          </div>
+        </div>
+        <div class="cat-section-bd">
+          <div class="chip-grid" id="cPlotGrid"></div>
+          <div class="inline-add" id="cPlotAddForm" style="display:none;">
+            <input type="text" placeholder="新情节名称" id="cPlotAddInput">
+            <select id="cPlotAddLevel2">
+              <option value="">分组</option>
+              <option value="现代都市">现代都市</option>
+              <option value="悬疑推理">悬疑推理</option>
+              <option value="科幻奇幻">科幻奇幻</option>
+              <option value="古代言情">古代言情</option>
+              <option value="现代言情">现代言情</option>
+            </select>
+            <button class="btn-xs confirm" onclick="cConfirmAddPlot()">✓</button>
+            <button class="btn-xs cancel" onclick="cCancelAddPlot()">✕</button>
+          </div>
+          <span class="add-btn" onclick="cShowPlotAddForm()" title="新增情节" style="margin-top:3px;">+</span>
+        </div>
+      </div>
+
+      <!-- ❸ 角色关键词 -->
+      <div class="cat-section">
+        <div class="cat-section-hd">
+          <span class="cat-title">角色关键词</span>
+          <div class="cat-tools">
+            <input class="cat-search" placeholder="搜索..." id="cCharSearch" oninput="cRenderChar()">
+            <button class="btn-icon" id="cCharManageBtn" onclick="cToggleCharManage()">⚙ 管理</button>
+          </div>
+        </div>
+        <div class="cat-section-bd">
+          <div class="chip-grid" id="cCharGrid"></div>
+          <div class="inline-add" id="cCharAddForm" style="display:none;">
+            <input type="text" placeholder="新关键词名称" id="cCharAddInput">
+            <button class="btn-xs confirm" onclick="cConfirmAddChar()">✓</button>
+            <button class="btn-xs cancel" onclick="cCancelAddChar()">✕</button>
+          </div>
+          <span class="add-btn" onclick="cShowCharAddForm()" title="新增关键词" style="margin-top:3px;">+</span>
+        </div>
+      </div>
+
+      <!-- ❹/❺ 情绪过程 + 故事背景 并排 -->
+      <div class="cat-row">
+        <div class="cat-section">
+          <div class="cat-section-hd">
+            <span class="cat-title">情绪过程</span>
+            <span style="font-size:10px;color:var(--muted);">单选</span>
+          </div>
+          <div class="cat-section-bd"><div class="chip-grid" id="cEmotionGrid"></div></div>
+        </div>
+        <div class="cat-section">
+          <div class="cat-section-hd">
+            <span class="cat-title">故事背景</span>
+            <span style="font-size:10px;color:var(--muted);">单选</span>
+          </div>
+          <div class="cat-section-bd"><div class="chip-grid" id="cBgGrid"></div></div>
+        </div>
+      </div>
+
+      <!-- ❻ 自定义标签 -->
+      <div class="cat-section">
+        <div class="cat-section-hd">
+          <span class="cat-title">自定义标签</span>
+          <span style="font-size:10px;color:var(--muted);">自由输入你想要的标签</span>
+        </div>
+        <div class="cat-section-bd">
+          <div class="chip-grid" id="cCustomGrid"><span class="empty-hint" id="cCustomEmpty">暂无自定义标签</span></div>
+          <div class="inline-add">
+            <input type="text" placeholder="输入自定义标签，回车添加..." id="cCustomInput" onkeydown="cAddCustomTag(event)">
+            <button class="btn-xs confirm" onclick="cAddCustomTagBtn()">添加</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="cat-right" id="cRightPanel">
+      <div class="cat-right-hd">
+        <h3>已选分类</h3>
+        <span class="count" id="cSelCount">0 项</span>
+      </div>
+      <div id="cSelectedPanel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Category data (hidden) -->
+<div style="display:none" id="cCatData">
+  <pre id="cMainCatData">{"男频":{"color":"#5B8DEF","category":["男生生活","都市日常","男生情感","历史古代","男频脑洞","男频衍生"]},"女频":{"color":"#E87D9F","category":["婚姻家庭","女生生活","女性成长","现言甜宠","青春虐恋","虐心婚恋","宫斗宅斗","古风世情","古言甜宠","古言虐恋","女频脑洞","女频衍生","纯爱"]},"通用":{"color":"#6BAF6B","category":["年代","民国旧影","玄幻仙侠","悬疑惊悚","其他"]}}</pre>
+  <pre id="cPlotCatData">[{"level2":"现代都市","level3":"黑道","tags":["黑帮","江湖","恩怨","势力斗争"],"remark":"男频热门"},{"level2":"现代都市","level3":"都市江湖","tags":["武林","门派","都市武侠"],"remark":""},{"level2":"现代都市","level3":"都市异能","tags":["超能力","觉醒","异能战斗"],"remark":""},{"level2":"现代都市","level3":"外卖","tags":["骑手","系统","逆袭"],"remark":""},{"level2":"现代都市","level3":"鉴宝","tags":["古董","捡漏","鉴定","寻宝"],"remark":""},{"level2":"现代都市","level3":"直播","tags":["网红","直播","带货","流量"],"remark":""},{"level2":"现代都市","level3":"打脸逆袭","tags":["废物变强","复仇","翻身"],"remark":"通用标签"},{"level2":"现代都市","level3":"系统","tags":["系统流","任务","奖励"],"remark":"通用标签"},{"level2":"现代都市","level3":"金手指","tags":["特殊能力","作弊","外挂"],"remark":"通用标签"},{"level2":"悬疑推理","level3":"推理","tags":["侦探","破案","逻辑"],"remark":""},{"level2":"悬疑推理","level3":"规则怪谈","tags":["诡异规则","生存","恐怖"],"remark":""},{"level2":"悬疑推理","level3":"民间奇闻","tags":["鬼怪","传说","灵异","志怪"],"remark":""},{"level2":"科幻奇幻","level3":"科幻","tags":["未来","科技","星际","AI"],"remark":""},{"level2":"科幻奇幻","level3":"游戏动漫","tags":["网游","二次元","穿越游戏"],"remark":""},{"level2":"科幻奇幻","level3":"无限流","tags":["副本","任务","轮回","生存"],"remark":""},{"level2":"科幻奇幻","level3":"末日求生","tags":["丧尸","末世","生存","资源"],"remark":""},{"level2":"科幻奇幻","level3":"架空","tags":["异世界","王朝","虚构历史"],"remark":""},{"level2":"古代言情","level3":"权谋","tags":["宫廷","政治","谋略","斗争"],"remark":""},{"level2":"古代言情","level3":"穿越","tags":["穿越古代","重生","改写命运"],"remark":"女频热门"},{"level2":"古代言情","level3":"重生","tags":["前世今生","复仇","改命"],"remark":""},{"level2":"古代言情","level3":"养崽文","tags":["养娃","萌宝","亲子"],"remark":""},{"level2":"古代言情","level3":"团宠","tags":["被宠爱","万人迷","全家宠"],"remark":""},{"level2":"古代言情","level3":"大女主","tags":["女强","独立","事业"],"remark":""},{"level2":"现代言情","level3":"暗恋","tags":["单向喜欢","青涩","心动"],"remark":""},{"level2":"现代言情","level3":"婚恋","tags":["婚姻","家庭","夫妻关系"],"remark":""},{"level2":"现代言情","level3":"追妻火葬场","tags":["追妻","后悔","虐男"],"remark":""},{"level2":"现代言情","level3":"追夫火葬场","tags":["追夫","后悔","虐女"],"remark":""},{"level2":"现代言情","level3":"真假千金","tags":["身份互换","认亲","豪门"],"remark":""},{"level2":"现代言情","level3":"先婚后爱","tags":["契约婚姻","日久生情"],"remark":""},{"level2":"现代言情","level3":"破镜重圆","tags":["分手复合","重逢","误会解除"],"remark":""},{"level2":"现代言情","level3":"女性互助","tags":["闺蜜","互助","成长"],"remark":""}]</pre>
+  <pre id="cCharData">["魔法","特种兵","奶爸","欧美帮派","病娇","校霸","萌宝","万人迷","白月光","婆媳","姐弟恋","校花校草","医生","神医","首富","替身","吸血鬼","狼人","赘婿","影帝影后","糙汉","女总裁","霸总","凤凰男","青梅竹马","女配"]</pre>
+  <pre id="cEmotionData">["先虐后甜","虐文","救赎","励志","甜宠","爽文","惊悚","沙雕搞笑"]</pre>
+  <pre id="cBgData">["家庭","校园","现代","豪门世家","西方古典","职场","娱乐圈","古代","西幻魔法","西方现代"]</pre>
+</div>
+
+<div class="cat-toast" id="cToast" style="display:none;"></div>
+
+<!-- ==================== HOOK PAGE ==================== -->
+<div class="page" id="page-hook">
+  <div class="step-indicator">
+    <div class="step-dot done">1</div><div class="step-line done"></div>
+    <div class="step-dot active">2</div><div class="step-line"></div>
+    <div class="step-dot">3</div><div class="step-line"></div>
+    <div class="step-dot">4</div><div class="step-line"></div>
+    <div class="step-dot">5</div><div class="step-line"></div>
+    <div class="step-dot">6</div><div class="step-line"></div>
+    <div class="step-dot">7</div>
+  </div>
+  
+  <div class="page-title">Step 2: 选择核心爽点</div>
+  <div class="page-subtitle">确定故事的核心驱动力，让读者欲罢不能</div>
+  
+  <!-- Selected Tags -->
+  <div class="card">
+    <div class="card-title">已选分类标签</div>
+    <div class="flex gap-4" style="flex-wrap:wrap;">
+      <span class="badge selected">都市脑洞（男频）</span>
+      <span class="badge selected">身份反转</span>
+      <span class="badge selected">赘婿逆袭</span>
+      <span class="badge selected">隐藏大佬</span>
+      <span class="badge selected">先抑后扬</span>
+    </div>
+    <button class="btn sm" style="margin-left:auto;display:block;margin-top:8px;">🎲 随机组合</button>
+  </div>
+  
+  <!-- Tab: AI Generate -->
+  <div class="tabs">
+    <div class="tab active">方式A: AI 生成爽点（推荐）</div>
+    <div class="tab">方式B: 从预设库选择</div>
+    <div class="tab">方式C: 手动输入</div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">额外要求（可选）</div>
+    <textarea class="textarea" placeholder="描述你对爽点的特殊要求...如：希望主角有隐藏身份、靠智谋逆袭..."></textarea>
+    <div class="mt-12"><button class="btn primary">✨ 生成爽点</button></div>
+  </div>
+  
+  <!-- Generated Hooks -->
+  <div class="mb-12">
+    <div class="flex items-center justify-between mb-12">
+      <span class="font-semibold">生成的爽点候选</span>
+    </div>
+    
+    <div class="card-grid-2">
+      <div class="card" style="border-width:2px;">
+        <div class="flex justify-between items-start mb-8">
+          <span class="badge">#hook_001</span>
+          <span class="badge blue">身份反转</span>
+        </div>
+        <div class="font-semibold mb-8">隐藏身份的赘婿，在家族危机中展露真正实力</div>
+        <div class="text-sm text-muted mb-8">主角以赘婿身份潜伏豪门，在所有人看不起的眼光下，凭借医术和商业才能暗中布局。当家族遭遇生死存亡危机时，他终于揭下面具，以碾压姿态掌控全局。</div>
+        <div class="info-box mb-8">💡 为什么有效：身份落差天然制造期待感，"废柴"="高手"的双重身份让每次反转都有爽感积累</div>
+        <div class="flex justify-between items-center">
+          <label class="flex items-center gap-8 text-sm"><input type="checkbox"> 保存到预设库</label>
+          <button class="btn primary">选择</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="flex justify-between items-start mb-8">
+          <span class="badge">#hook_002</span>
+          <span class="badge blue">神医归来</span>
+        </div>
+        <div class="font-semibold mb-8">退隐神医重出江湖，用医术征服世界</div>
+        <div class="text-sm text-muted mb-8">曾经的神医隐退都市成为普通人，一场变故迫使他展露医术，震惊医学界，各路人马纷纷求医问药。</div>
+        <div class="info-box mb-8">💡 为什么有效：专业实力碾压，每次治愈都是对过去嘲笑的最好回应</div>
+        <div class="flex justify-between items-center">
+          <label class="flex items-center gap-8 text-sm"><input type="checkbox"> 保存到预设库</label>
+          <button class="btn">选择</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="flex justify-between mt-16">
+    <button class="btn">← 上一步</button>
+    <div></div>
+  </div>
+</div>
+
+<!-- ==================== PLANS PAGE ==================== -->
+<div class="page" id="page-plans">
+  <div class="step-indicator">
+    <div class="step-dot done">1</div><div class="step-line done"></div>
+    <div class="step-dot done">2</div><div class="step-line done"></div>
+    <div class="step-dot active">3</div><div class="step-line"></div>
+    <div class="step-dot">4</div><div class="step-line"></div>
+    <div class="step-dot">5</div><div class="step-line"></div>
+    <div class="step-dot">6</div><div class="step-line"></div>
+    <div class="step-dot">7</div>
+  </div>
+  
+  <div class="flex items-center justify-between mb-16">
+    <div class="flex items-center gap-12">
+      <button class="btn">← 上一步</button>
+      <div>
+        <div class="page-title" style="margin-bottom:0;">Step 2: 选择基础设定</div>
+        <div class="text-sm text-muted">核心爽点: 隐藏身份的赘婿，在家族危机中展露真正实力</div>
+      </div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn">🔄 重新生成</button>
+      <button class="btn primary">下一步 →</button>
+    </div>
+  </div>
+  
+  <!-- Plan Cards -->
+  <div>
+    <div class="card" style="border-width:2px;">
+      <div class="flex justify-between items-start mb-12">
+        <div class="flex gap-8 items-center">
+          <span class="badge">方案 A</span>
+          <span class="badge blue">正叙</span>
+          <span class="badge green">HE 圆满结局</span>
+          <span class="badge selected">已选</span>
+        </div>
+      </div>
+      <div class="text-sm mb-12">
+        <strong>情节摘要：</strong>林辰以赘婿身份入赘苏家三年，受尽冷眼。在一次家族商业酒会上，苏家遭遇竞争对手恶意收购，林辰暗中联系昔日部下，以雷霆手段扭转局面。苏家众人目瞪口呆，妻子苏晚晴第一次正视这个"废物"丈夫。随后，各方势力纷纷涌来，林辰的身份开始层层揭开...
+      </div>
+      <div class="card-grid-3 text-sm">
+        <div><strong>情绪曲线：</strong>压抑 → 爆发 → 震惊 → 甜蜜</div>
+        <div><strong>预估字数：</strong>15,000 - 18,000 字</div>
+        <div><strong>亮点：</strong>身份反转爽感充足，情感线 + 事业线双线并行</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="flex justify-between items-start mb-12">
+        <div class="flex gap-8 items-center">
+          <span class="badge">方案 B</span>
+          <span class="badge blue">倒叙</span>
+          <span class="badge green">HE 圆满结局</span>
+        </div>
+      </div>
+      <div class="text-sm mb-12">
+        <strong>情节摘要：</strong>开场即高潮——林辰在顶级医学峰会上被曝光真实身份。倒叙回三年前，他伪装成普通人入赘苏家。通过一次次暗中展露医术、挽救苏家产业、保护苏晚晴，逐步赢得尊重，最终成为无可争议的传奇人物...
+      </div>
+      <div class="card-grid-3 text-sm">
+        <div><strong>情绪曲线：</strong>高潮 → 回忆 → 渐强 → 顶峰</div>
+        <div><strong>预估字数：</strong>12,000 - 15,000 字</div>
+        <div><strong>亮点：</strong>开篇即引爆，回忆叙述增加悬念感</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="flex justify-between items-start mb-12">
+        <div class="flex gap-8 items-center">
+          <span class="badge">方案 C</span>
+          <span class="badge blue">正叙</span>
+          <span class="badge yellow">OE 开放式结局</span>
+        </div>
+      </div>
+      <div class="text-sm mb-12">
+        <strong>情节摘要：</strong>多条线索交织——商业竞争、医术博弈、家族内斗、旧敌寻仇。林辰在解决一个个危机的过程中逐渐揭开身份的层层面纱，但最终面临一个选择：回归巅峰还是留在妻子身边...
+      </div>
+      <div class="card-grid-3 text-sm">
+        <div><strong>情绪曲线：</strong>多元交织 → 层层推进 → 双重抉择</div>
+        <div><strong>预估字数：</strong>20,000 - 25,000 字</div>
+        <div><strong>亮点：</strong>多条线索交织，结局留白引人深思</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DETAIL PLAN PAGE ==================== -->
+<div class="page" id="page-plan">
+  <div class="step-indicator">
+    <div class="step-dot done">1</div><div class="step-line done"></div>
+    <div class="step-dot done">2</div><div class="step-line done"></div>
+    <div class="step-dot done">3</div><div class="step-line done"></div>
+    <div class="step-dot active">4</div><div class="step-line"></div>
+    <div class="step-dot">5</div><div class="step-line"></div>
+    <div class="step-dot">6</div><div class="step-line"></div>
+    <div class="step-dot">7</div>
+  </div>
+  
+  <div class="flex items-center justify-between mb-16">
+    <div class="flex items-center gap-12">
+      <button class="btn">← 上一步</button>
+      <div>
+        <div class="page-title" style="margin-bottom:0;">Step 3: 详细规划</div>
+        <div class="text-sm text-muted">核心爽点: 隐藏身份的赘婿，在家族危机中展露真正实力</div>
+      </div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn">🔄 重新生成</button>
+      <button class="btn primary">确认规划 →</button>
+    </div>
+  </div>
+  
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active">👤 角色人设</div>
+    <div class="tab">📖 情节列表 (12)</div>
+    <div class="tab">👁 伏笔与反转 (6)</div>
+    <div class="tab">✨ 叙事顺序</div>
+  </div>
+  
+  <!-- Characters Tab Content -->
+  <div class="card-grid-2">
+    <div class="card">
+      <div class="flex justify-between items-start mb-8">
+        <span class="badge" style="background:var(--fg);color:var(--primary-fg);">主角</span>
+        <span style="cursor:pointer;color:var(--muted);">✏️</span>
+      </div>
+      <div style="font-size:13px;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;">
+        <div><strong>姓名：</strong>林辰</div>
+        <div><strong>年龄：</strong>28</div>
+        <div><strong>表面身份：</strong>苏家赘婿</div>
+        <div><strong>真实身份：</strong>隐退神医/商业奇才</div>
+        <div><strong>欲望：</strong>保护妻子，获得岳父认可</div>
+        <div><strong>恐惧：</strong>暴露身份后失去平静生活</div>
+        <div><strong>秘密：</strong>曾是暗界第一神医</div>
+        <div><strong>缺陷：</strong>不擅表达情感</div>
+        <div><strong>角色弧线：</strong>从隐忍到释放 → 从自卑到自信</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="flex justify-between items-start mb-8">
+        <span class="badge red">对手</span>
+        <span style="cursor:pointer;color:var(--muted);">✏️</span>
+      </div>
+      <div style="font-size:13px;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;">
+        <div><strong>姓名：</strong>赵天龙</div>
+        <div><strong>身份：</strong>赵氏集团董事长</div>
+        <div><strong>动机：</strong>吞并苏家产业</div>
+        <div><strong>为什么阻碍：</strong>视林辰为最大障碍</div>
+        <div><strong>与主角关系：</strong>商业竞争对手</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="flex justify-between items-start mb-8">
+        <span class="badge blue">辅助角色</span>
+        <span style="cursor:pointer;color:var(--muted);">✏️</span>
+      </div>
+      <div style="font-size:13px;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;">
+        <div><strong>姓名：</strong>苏晚晴</div>
+        <div><strong>身份：</strong>苏家大小姐/林辰妻子</div>
+        <div><strong>关键特征：</strong>强势、独立、暗藏温柔</div>
+        <div><strong>角色定位：</strong>情感核心，洞察真相的关键人物</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CHAPTERS PAGE ==================== -->
+<div class="page" id="page-chapters">
+  <div class="step-indicator">
+    <div class="step-dot done">1</div><div class="step-line done"></div>
+    <div class="step-dot done">2</div><div class="step-line done"></div>
+    <div class="step-dot done">3</div><div class="step-line done"></div>
+    <div class="step-dot done">4</div><div class="step-line done"></div>
+    <div class="step-dot active">5</div><div class="step-line"></div>
+    <div class="step-dot">6</div><div class="step-line"></div>
+    <div class="step-dot">7</div>
+  </div>
+  
+  <div class="flex items-center justify-between mb-16">
+    <div class="flex items-center gap-12">
+      <button class="btn">← 上一步</button>
+      <div>
+        <div class="page-title" style="margin-bottom:0;">Step 4: 章节规划</div>
+        <div class="text-sm text-muted">预估总字数: 15,000 · 共 15 章</div>
+      </div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn">+ 添加番外章</button>
+      <button class="btn">🔄 重新生成</button>
+      <button class="btn primary">确认拆分 →</button>
+    </div>
+  </div>
+  
+  <!-- Chapter List -->
+  <div>
+    <div class="card">
+      <div class="flex gap-12 items-start">
+        <div style="color:var(--muted);cursor:default;font-size:16px;margin-top:2px;">⋮⋮</div>
+        <div class="grow">
+          <div class="flex justify-between items-center mb-8">
+            <div class="flex gap-8 items-center">
+              <span class="badge" style="background:var(--fg);color:var(--primary-fg);">第1章</span>
+              <span class="font-semibold">不速之客</span>
+            </div>
+            <span class="text-sm text-muted">~1,000 字</span>
+          </div>
+          <div class="text-sm text-muted mb-8">
+            <span style="color:var(--fg);font-weight:600;">情节梗概：</span>
+            苏家商业酒会开场，赵天龙突然造访宣布恶意收购计划。苏家陷入慌乱，林辰在角落静静观察。
+          </div>
+          <div class="card-grid-3 text-sm" style="font-size:12px;">
+            <div><strong>场景覆盖：</strong>商业酒会入场 → 突发危机</div>
+            <div><strong>核心目标：</strong>建立危机氛围，埋下主角出手的伏笔</div>
+            <div><strong>情绪目标：</strong>紧张压抑 → 暗流涌动</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="flex gap-12 items-start">
+        <div style="color:var(--muted);cursor:default;font-size:16px;margin-top:2px;">⋮⋮</div>
+        <div class="grow">
+          <div class="flex justify-between items-center mb-8">
+            <div class="flex gap-8 items-center">
+              <span class="badge" style="background:var(--fg);color:var(--primary-fg);">第2章</span>
+              <span class="font-semibold">暗流涌动</span>
+            </div>
+            <span class="text-sm text-muted">~900 字</span>
+          </div>
+          <div class="text-sm text-muted mb-8">
+            <span style="color:var(--fg);font-weight:600;">情节梗概：</span>
+            林辰暗中发出一条短信，联系昔日部下。苏家内部开始争论对策，苏晚晴力排众议决定独立应对。
+          </div>
+          <div class="card-grid-3 text-sm" style="font-size:12px;">
+            <div><strong>场景覆盖：</strong>会议室争论 → 林辰短信 → 苏晚晴决议</div>
+            <div><strong>核心目标：</strong>展示各方态度，为后续反转做铺垫</div>
+            <div><strong>情绪目标：</strong>暗流涌动，期待感增强</div>
+          </div>
+          <div class="info-box mt-8">
+            <strong>章末钩子：</strong>"林辰合上手机，嘴角微微上扬——他终于等到了这一刻。"
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="flex gap-12 items-start">
+        <div style="color:var(--muted);cursor:default;font-size:16px;margin-top:2px;">⋮⋮</div>
+        <div class="grow">
+          <div class="flex justify-between items-center mb-8">
+            <div class="flex gap-8 items-center">
+              <span class="badge" style="background:var(--fg);color:var(--primary-fg);">第3章</span>
+              <span class="font-semibold">雷霆一击</span>
+            </div>
+            <span class="text-sm text-muted">~1,100 字</span>
+          </div>
+          <div class="text-sm text-muted mb-8">
+            <span style="color:var(--fg);font-weight:600;">情节梗概：</span>
+            商业谈判现场，赵天龙以为胜券在握。林辰突然起身，揭露其背后阴谋，并宣布神秘资本已全面介入。
+          </div>
+          <div class="card-grid-3 text-sm" style="font-size:12px;">
+            <div><strong>场景覆盖：</strong>谈判桌 → 反转 → 众人震惊</div>
+            <div><strong>核心目标：</strong>第一波身份揭露，引爆爽感</div>
+            <div><strong>情绪目标：</strong>压抑 → 爆发 → 震惊 → 爽感巅峰</div>
+          </div>
+          <div class="info-box mt-8">
+            <strong>章末钩子：</strong>"'林辰...你到底是谁？' 苏晚晴第一次用这样的眼神看着自己的丈夫。"
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="margin-top:8px;text-align:center;color:var(--muted);font-size:13px;padding:12px;border:1px dashed var(--border);">
+      ... 还有 12 章 ...
+    </div>
+  </div>
+</div>
+
+<!-- ==================== WRITE PAGE ==================== -->
+<div class="page" id="page-write">
+  <div class="step-indicator">
+    <div class="step-dot done">1</div><div class="step-line done"></div>
+    <div class="step-dot done">2</div><div class="step-line done"></div>
+    <div class="step-dot done">3</div><div class="step-line done"></div>
+    <div class="step-dot done">4</div><div class="step-line done"></div>
+    <div class="step-dot done">5</div><div class="step-line done"></div>
+    <div class="step-dot active">6</div><div class="step-line"></div>
+    <div class="step-dot">7</div>
+  </div>
+  
+  <div class="flex items-center justify-between mb-16">
+    <div class="flex items-center gap-12">
+      <button class="btn">← 上一步</button>
+      <div>
+        <div class="page-title" style="margin-bottom:0;">Step 5: 写作工作台</div>
+        <div class="text-sm text-muted">已完成 4/15 章 · 总字数 4,230</div>
+      </div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn">⚡ 一键生成全部</button>
+      <button class="btn primary">下一步 →</button>
+    </div>
+  </div>
+  
+  <!-- Three-column layout -->
+  <div style="display:flex; gap: 16px; height: calc(100vh - 260px);">
+    <!-- Left: Chapter List -->
+    <div style="width: 200px; border: 1px solid var(--border); overflow-y: auto; flex-shrink: 0;">
+      <div style="padding: 8px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--muted); font-weight: 600;">章节列表</div>
+      <div style="padding: 8px 12px; font-size: 13px; color: var(--success); border-bottom: 1px solid var(--border);">✓ 第1章 不速之客</div>
+      <div style="padding: 8px 12px; font-size: 13px; color: var(--success); border-bottom: 1px solid var(--border);">✓ 第2章 暗流涌动</div>
+      <div style="padding: 8px 12px; font-size: 13px; color: var(--success); border-bottom: 1px solid var(--border);">✓ 第3章 雷霆一击</div>
+      <div style="padding: 8px 12px; font-size: 13px; color: var(--success); border-bottom: 1px solid var(--border);">✓ 第4章 身份之谜</div>
+      <div style="padding: 8px 12px; font-size: 13px; background: var(--fg); color: var(--primary-fg); border-bottom: 1px solid var(--border);">第5章 各方云动</div>
+      <div style="padding: 8px 12px; font-size: 13px; border-bottom: 1px solid var(--border); color: var(--muted);">第6章 ...</div>
+      <div style="padding: 8px 12px; font-size: 13px; border-bottom: 1px solid var(--border); color: var(--muted);">第7章 ...</div>
+      <div style="padding: 8px 12px; font-size: 13px; border-bottom: 1px solid var(--border); color: var(--muted);">第8章 ...</div>
+    </div>
+    
+    <!-- Center: Editor -->
+    <div style="flex: 1; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;">
+      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+        <span>第5章: 各方云动</span>
+        <div class="flex gap-8">
+          <button class="btn sm">修改</button>
+          <button class="btn sm danger">重生成</button>
+          <button class="btn sm primary">接受</button>
+        </div>
+      </div>
+      <div style="flex:1; padding: 16px; overflow-y: auto; white-space: pre-wrap; font-size: 14px; line-height: 1.8;">
+苏家酒会事件的余波持续发酵。
+
+林辰单手托腮坐在客厅沙发上，手中的茶杯已经凉了半盏。苏晚晴从二楼走下来，换了一身家居服，目光复杂地打量着这个与她同床共枕三年的男人。
+
+"你今天在酒会上说的那些话..."她走到林辰对面坐下，"我需要一个解释。"
+
+林辰放下茶杯，微微一笑:"晚晴，有些事情不是我不想说，而是时机未到。"
+
+"时机？"苏晚晴的声音微微提高，"赵天龙几乎吞并了整个苏家产业，你却告诉我时机未到？"
+
+客厅里的气氛骤然凝固。
+
+就在这时，林辰的手机震动起来。他看了一眼屏幕，眉头微皱——是一个很多年没有亮起过的号码。
+
+"抱歉。"他起身走到窗边，接通了电话。
+
+电话那头传来一个低沉的声音:"辰哥，事情已经办妥。赵家在海外的三处资产已被冻结，国内的两条资金链今晚就会断裂。"
+
+"知道了。"林辰语气平淡，"继续盯着，不要轻举妄动。"
+
+挂断电话，他转身看向苏晚晴。
+
+"明天，赵天龙会主动来找我们谈。"他说，"这一次，主动权在我们手里。"
+
+苏晚晴愣在原地。她第一次觉得，眼前的这个男人，仿佛是一头沉睡多年终于苏醒的猛兽。
+      </div>
+      <div style="padding: 10px 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted);">
+        <span>字数: 563 / 1,000</span>
+        <button class="btn primary sm">生成第5章</button>
+      </div>
+    </div>
+    
+    <!-- Right: Context Panel -->
+    <div style="width: 220px; border: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; padding: 12px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px;">前文摘要</div>
+      <div style="font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.6;">
+        上一章结局——林辰在商业酒会上揭露赵天龙的阴谋，并宣布神秘资本已全面介入。苏晚晴和众人震惊不已...
+      </div>
+      
+      <div style="font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px;">本章目标</div>
+      <div style="font-size: 12px; margin-bottom: 16px;">
+        展示各方势力对酒会事件的反应，推进林辰与苏晚晴的情感线，为下一章埋入暗线伏笔。
+      </div>
+      
+      <div style="font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px;">情绪目标</div>
+      <div style="font-size: 12px;">
+        暗流涌动 → 紧张 → 期待
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INTEGRATE PAGE ==================== -->
+<div class="page" id="page-integrate">
+  <div class="step-indicator">
+    <div class="step-dot done">1</div><div class="step-line done"></div>
+    <div class="step-dot done">2</div><div class="step-line done"></div>
+    <div class="step-dot done">3</div><div class="step-line done"></div>
+    <div class="step-dot done">4</div><div class="step-line done"></div>
+    <div class="step-dot done">5</div><div class="step-line done"></div>
+    <div class="step-dot done">6</div><div class="step-line done"></div>
+    <div class="step-dot active">7</div>
+  </div>
+  
+  <div class="flex items-center justify-between mb-16">
+    <div class="flex items-center gap-12">
+      <button class="btn">← 返回编辑</button>
+      <div>
+        <div class="page-title" style="margin-bottom:0;">Step 6: 全文整合</div>
+        <div class="text-sm text-muted">已完成 15/15 章 · 总字数 15,230</div>
+      </div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn">📥 导出 TXT</button>
+      <button class="btn primary">🔍 开始整合</button>
+    </div>
+  </div>
+  
+  <!-- Stats Row -->
+  <div class="card-grid-3 mb-24">
+    <div class="stat-card">
+      <div class="stat-num">15</div>
+      <div class="stat-label">总章节数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">15,230</div>
+      <div class="stat-label">总字数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--success);">15</div>
+      <div class="stat-label">已完成</div>
+    </div>
+  </div>
+  
+  <!-- Opening Hook -->
+  <div class="card mb-16">
+    <div class="card-title">📌 开篇钩子</div>
+    <div class="flex justify-between items-start">
+      <div class="flex items-center gap-8">
+        <span class="badge">#hook_001</span>
+        <span class="font-semibold">"林辰没想到，他隐藏了五年的身份，会因为一杯打翻的咖啡而暴露。"</span>
+      </div>
+      <button class="btn sm">选择</button>
+    </div>
+    <div class="text-sm text-muted mt-8">切入角度: 意外事件触发 · 第一人称开篇 · 制造悬念</div>
+  </div>
+  
+  <!-- Issues Found -->
+  <div class="card mb-16" style="border-color:var(--warning); background:var(--warning-bg);">
+    <div class="card-title">⚠️ 发现 3 个问题</div>
+    
+    <div style="border-bottom: 1px solid var(--border); padding: 12px 0;">
+      <div class="flex justify-between items-start mb-8">
+        <div class="flex gap-8 items-center">
+          <span class="badge red">严重</span>
+          <span class="font-semibold">第7章和第9章时间线矛盾</span>
+        </div>
+        <button class="btn sm">修复</button>
+      </div>
+      <div class="text-sm text-muted">第7章发生在"酒会后第三天"，第9章却提到"距离酒会已过去两周"，中间缺少过渡。影响章节: 7、8、9</div>
+    </div>
+    
+    <div style="border-bottom: 1px solid var(--border); padding: 12px 0;">
+      <div class="flex justify-between items-start mb-8">
+        <div class="flex gap-8 items-center">
+          <span class="badge yellow">警告</span>
+          <span class="font-semibold">角色名不一致</span>
+        </div>
+        <button class="btn sm">修复</button>
+      </div>
+      <div class="text-sm text-muted">"赵天龙"在第3章和第11章被误写为"赵天隆"。影响章节: 3、11</div>
+    </div>
+    
+    <div style="padding: 12px 0;">
+      <div class="flex justify-between items-start mb-8">
+        <div class="flex gap-8 items-center">
+          <span class="badge yellow">警告</span>
+          <span class="font-semibold">章节结尾缺少钩子</span>
+        </div>
+        <button class="btn sm">修复</button>
+      </div>
+      <div class="text-sm text-muted">第12章结尾没有留下章末钩子，与前后的节奏不一致。影响章节: 12</div>
+    </div>
+    
+    <div class="mt-12"><button class="btn primary">一键修复全部 (3项)</button></div>
+  </div>
+  
+  <!-- Integration Checks -->
+  <div class="card mb-16">
+    <div class="card-title">✅ 整合检查</div>
+    <div style="display:flex; flex-direction: column; gap: 8px; font-size: 13px;">
+      <div><span style="color:var(--success);">✓</span> 情节连贯性 — 主线逻辑流畅，无断档</div>
+      <div><span style="color:var(--success);">✓</span> 人设一致性 — 主要角色性格稳定</div>
+      <div><span style="color:var(--warning);">⚠</span> 伏笔回收率 — 6个伏笔中已回收5个，第4个未完全回收</div>
+      <div><span style="color:var(--success);">✓</span> 情绪节奏 — 张弛有度，高潮分布合理</div>
+      <div><span style="color:var(--success);">✓</span> 字数分布 — 章节字数均匀 (800-1200)</div>
+      <div><span style="color:var(--muted);">·</span> 整体节奏评分: <strong>8.5/10</strong> — 前期节奏紧凑，中期略有放缓</div>
+    </div>
+  </div>
+  
+  <!-- Alternative Titles -->
+  <div class="card mb-16">
+    <div class="card-title">📝 备选作品名</div>
+    <div class="card-grid-2">
+      <div style="border:1px solid var(--border);padding:12px;">
+        <div class="flex justify-between items-center mb-8">
+          <span class="badge">#1</span>
+          <button class="btn sm primary">选用</button>
+        </div>
+        <div class="font-semibold mb-4">《赘婿风云》</div>
+        <div class="text-sm text-muted">简短有力，暗示身份反转与商战元素</div>
+      </div>
+      <div style="border:1px solid var(--border);padding:12px;">
+        <div class="flex justify-between items-center mb-8">
+          <span class="badge">#2</span>
+          <button class="btn sm">选用</button>
+        </div>
+        <div class="font-semibold mb-4">《隐龙之赘婿归来》</div>
+        <div class="text-sm text-muted">突出隐藏身份的核心设定，悬念感强</div>
+      </div>
+      <div style="border:1px solid var(--border);padding:12px;">
+        <div class="flex justify-between items-center mb-8">
+          <span class="badge">#3</span>
+          <button class="btn sm">选用</button>
+        </div>
+        <div class="font-semibold mb-4">《最强赘婿》</div>
+        <div class="text-sm text-muted">直接点明爽点主题，市场接受度高</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SETTINGS PAGE ==================== -->
+<div class="page" id="page-settings">
+  <div class="page-title">设置</div>
+  <div class="page-subtitle">配置 LLM 接口、写作偏好和应用外观</div>
+  
+  <!-- LLM Configuration -->
+  <div class="card">
+    <div class="card-title">🤖 LLM API 配置</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">API 地址</label>
+        <input class="input" value="https://api.openai.com/v1">
+      </div>
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">API Key</label>
+        <input class="input" type="password" value="sk-••••••••••••••••••••">
+      </div>
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">模型名称</label>
+        <input class="input" value="gpt-4o">
+      </div>
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">最大 Token</label>
+        <input class="input" value="4096" type="number">
+      </div>
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">温度 (0-2)</label>
+        <div class="range-wrap">
+          <input type="range" min="0" max="2" step="0.1" value="0.8">
+          <span class="value">0.8</span>
+        </div>
+      </div>
+    </div>
+    <div class="mt-12">
+      <button class="btn primary">测试连接</button>
+      <span style="margin-left: 12px; font-size: 13px; color: var(--success);">● 已连接</span>
+    </div>
+  </div>
+  
+  <!-- Writing Preferences -->
+  <div class="card">
+    <div class="card-title">✍️ 写作偏好</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">默认每章字数</label>
+        <select class="select"><option>500</option><option selected>1000</option><option>1500</option><option>2000</option><option>3000</option></select>
+      </div>
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">默认总字数目标</label>
+        <select class="select"><option>10000</option><option selected>15000</option><option>20000</option><option>30000</option></select>
+      </div>
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">写作风格</label>
+        <select class="select"><option selected>流畅自然</option><option>网文风格</option><option>文学化表达</option><option>极简白描</option></select>
+      </div>
+      <div>
+        <label class="text-sm font-semibold" style="display:block;margin-bottom:4px;">默认叙事视角</label>
+        <select class="select"><option selected>第三人称</option><option>第一人称</option><option>多视角</option></select>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Theme -->
+  <div class="card">
+    <div class="card-title">🎨 主题</div>
+    <div class="flex gap-12">
+      <div style="border:2px solid var(--fg); padding: 12px 24px; cursor: pointer;">
+        <div style="width:80px;height:40px;background:white;border:1px solid var(--border);margin-bottom:4px;"></div>
+        <div style="text-align:center;font-size:12px;font-weight:600;">浅色模式</div>
+      </div>
+      <div style="border:1px solid var(--border); padding: 12px 24px; cursor: pointer; opacity:0.6;">
+        <div style="width:80px;height:40px;background:#1a1a1a;border:1px solid #333;margin-bottom:4px;"></div>
+        <div style="text-align:center;font-size:12px;color:var(--muted);">深色模式</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="flex justify-between mt-16">
+    <button class="btn">恢复默认设置</button>
+    <button class="btn primary">保存设置</button>
+  </div>
+</div>
+
+<!-- ==================== EXPORT PAGE ==================== -->
+<div class="page" id="page-export">
+  <div class="page-title">数据导出与备份</div>
+  <div class="page-subtitle">导出作品为文件，或备份整个数据库</div>
+  
+  <!-- Export Selection -->
+  <div class="card">
+    <div class="card-title">📤 选择要导出的作品</div>
+    <div class="flex gap-8 items-center mb-12">
+      <select class="select" style="max-width:300px;">
+        <option>全部作品</option>
+        <option>都市之最强赘婿</option>
+        <option>异界炼丹师</option>
+        <option>末日重生录</option>
+      </select>
+      <button class="btn primary">选择</button>
+    </div>
+    
+    <!-- Export Format Cards -->
+    <div class="card-grid-3 mt-16">
+      <div class="card" style="cursor:pointer;">
+        <div style="font-size: 24px; margin-bottom: 8px;">📄</div>
+        <div class="font-semibold mb-4">导出 TXT</div>
+        <div class="text-sm text-muted mb-12">纯文本格式，适合阅读器导入</div>
+        <button class="btn primary w-full" style="justify-content:center;">导出 TXT</button>
+      </div>
+      <div class="card" style="cursor:pointer;">
+        <div style="font-size: 24px; margin-bottom: 8px;">📋</div>
+        <div class="font-semibold mb-4">导出 JSON</div>
+        <div class="text-sm text-muted mb-12">结构化数据，保留所有元信息</div>
+        <button class="btn primary w-full" style="justify-content:center;">导出 JSON</button>
+      </div>
+      <div class="card" style="cursor:pointer;">
+        <div style="font-size: 24px; margin-bottom: 8px;">📚</div>
+        <div class="font-semibold mb-4">导出 EPUB</div>
+        <div class="text-sm text-muted mb-12">电子书格式，支持章节导航</div>
+        <button class="btn w-full" style="justify-content:center;" disabled>即将支持</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Database Backup -->
+  <div class="card">
+    <div class="card-title">🗄 数据库备份</div>
+    <div class="text-sm text-muted mb-12">
+      备份整个数据库，包括所有作品、配置和历史记录。建议定期备份。
+    </div>
+    <div class="card-grid-2">
+      <div class="card" style="cursor:pointer;">
+        <div class="font-semibold mb-4">📦 完整备份</div>
+        <div class="text-sm text-muted mb-8">备份整个数据库（包含所有作品）</div>
+        <div class="text-sm text-muted">上次备份: 2025/06/28 14:30</div>
+        <div class="mt-12"><button class="btn primary w-full" style="justify-content:center;">创建备份</button></div>
+      </div>
+      <div class="card" style="cursor:pointer;">
+        <div class="font-semibold mb-4">📥 恢复备份</div>
+        <div class="text-sm text-muted mb-12">从备份文件恢复数据（将覆盖当前数据）</div>
+        <button class="btn danger w-full" style="justify-content:center;">选择备份文件</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- History -->
+  <div class="card">
+    <div class="card-title">📋 备份历史</div>
+    <div style="display:flex; flex-direction: column; gap: 4px;">
+      <div style="border-bottom: 1px solid var(--border); padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="font-semibold">fanqie_backup_20250628_1430.db</span>
+          <span class="text-sm text-muted" style="margin-left: 12px;">2025/06/28 14:30</span>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn sm">恢复</button>
+          <button class="btn sm">删除</button>
+        </div>
+      </div>
+      <div style="border-bottom: 1px solid var(--border); padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="font-semibold">fanqie_backup_20250625_0900.db</span>
+          <span class="text-sm text-muted" style="margin-left: 12px;">2025/06/25 09:00</span>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn sm">恢复</button>
+          <button class="btn sm">删除</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pageId = 'page-' + btn.dataset.page;
+    document.getElementById(pageId).classList.add('active');
+  });
+});
+
+// ==================== CATEGORY PAGE JS ====================
+(function() {
+const cMainCatData = JSON.parse(document.getElementById('cMainCatData').textContent);
+let cPlotData = JSON.parse(document.getElementById('cPlotCatData').textContent);
+let cCharData = JSON.parse(document.getElementById('cCharData').textContent);
+let cEmotionData = JSON.parse(document.getElementById('cEmotionData').textContent);
+let cBgData = JSON.parse(document.getElementById('cBgData').textContent);
+
+const cAllMain = [];
+for (const [gender, data] of Object.entries(cMainCatData)) {
+  for (const cat of data.category) {
+    cAllMain.push({ gender, name: cat, cls: gender === '男频' ? 'male' : gender === '女频' ? 'female' : 'common' });
+  }
+}
+
+const cState = { mainCategory: null, plot: [], character: [], emotion: null, background: null, customTags: [], plotManage: false, charManage: false };
+
+function cRenderMain() {
+  const grid = document.getElementById('cMainGrid');
+  grid.innerHTML = cAllMain.map(c => `<span class="chip chip-main ${c.cls}${cState.mainCategory===c.name?' selected':''}" data-value="${c.name}" onclick="cSelectMain('${c.name}')">${c.name}</span>`).join('');
+}
+
+window.cSelectMain = function(name) {
+  cState.mainCategory = (cState.mainCategory === name) ? null : name;
+  cRenderMain(); cRenderSelected();
+};
+
+function cRenderPlot() {
+  const grid = document.getElementById('cPlotGrid');
+  const search = (document.getElementById('cPlotSearch').value || '').toLowerCase();
+  const filter = document.getElementById('cPlotFilter').value;
+  const level2s = [...new Set(cPlotData.map(d => d.level2))];
+  const sel = document.getElementById('cPlotFilter');
+  sel.innerHTML = '<option value="">全部</option>' + level2s.map(l => `<option value="${l}" ${filter===l?'selected':''}>${l}</option>`).join('');
+  let filtered = cPlotData;
+  if (search) filtered = filtered.filter(d => d.level3.toLowerCase().includes(search) || d.level2.toLowerCase().includes(search) || d.tags.some(t => t.toLowerCase().includes(search)));
+  if (filter) filtered = filtered.filter(d => d.level2 === filter);
+  grid.className = 'chip-grid' + (cState.plotManage ? ' manage-mode' : '');
+  grid.innerHTML = filtered.map((d, i) => {
+    const sel = cState.plot.includes(d.level3) ? ' selected' : '';
+    return `<span class="chip${sel}" data-index="${i}" data-value="${d.level3}" draggable="${cState.plotManage}" ondragstart="cDragStart(event,'plot',${i})" ondragover="cDragOver(event)" ondrop="cDrop(event,'plot',${i})" onclick="if(!cState.plotManage)cTogglePlot('${d.level3}')"><span class="drag-hd">⋮</span><span>${d.level3}<span class="lvl2">${d.level2}</span></span><span class="del-btn" onclick="event.stopPropagation();cDeletePlot(${i})">×</span></span>`;
+  }).join('');
+}
+
+window.cTogglePlot = function(val) {
+  const idx = cState.plot.indexOf(val);
+  if (idx >= 0) cState.plot.splice(idx, 1); else cState.plot.push(val);
+  cRenderPlot(); cRenderSelected();
+};
+window.cTogglePlotManage = function() { cState.plotManage = !cState.plotManage; document.getElementById('cPlotManageBtn').classList.toggle('active', cState.plotManage); cRenderPlot(); };
+window.cShowPlotAddForm = function() { document.getElementById('cPlotAddForm').style.display = 'flex'; document.getElementById('cPlotAddInput').value = ''; document.getElementById('cPlotAddInput').focus(); };
+window.cCancelAddPlot = function() { document.getElementById('cPlotAddForm').style.display = 'none'; };
+window.cConfirmAddPlot = function() {
+  const name = document.getElementById('cPlotAddInput').value.trim();
+  const level2 = document.getElementById('cPlotAddLevel2').value;
+  if (!name) { cToast('请输入情节名称'); return; }
+  if (!level2) { cToast('请选择分组'); return; }
+  if (cPlotData.some(d => d.level3 === name)) { cToast('该情节已存在'); return; }
+  cPlotData.push({ level2, level3: name, tags: [], remark: '' });
+  cCancelAddPlot(); cRenderPlot(); cToast('已新增: ' + name);
+};
+window.cDeletePlot = function(index) {
+  const d = cPlotData[index];
+  cState.plot = cState.plot.filter(p => p !== d.level3);
+  cPlotData.splice(index, 1);
+  cRenderPlot(); cRenderSelected(); cToast('已删除: ' + d.level3);
+};
+
+function cRenderChar() {
+  const grid = document.getElementById('cCharGrid');
+  const search = (document.getElementById('cCharSearch').value || '').toLowerCase();
+  let filtered = cCharData;
+  if (search) filtered = filtered.filter(c => c.toLowerCase().includes(search));
+  grid.className = 'chip-grid' + (cState.charManage ? ' manage-mode' : '');
+  grid.innerHTML = filtered.map((c, i) => {
+    const sel = cState.character.includes(c) ? ' selected' : '';
+    return `<span class="chip${sel}" data-index="${i}" data-value="${c}" draggable="${cState.charManage}" ondragstart="cDragStart(event,'char',${i})" ondragover="cDragOver(event)" ondrop="cDrop(event,'char',${i})" onclick="if(!cState.charManage)cToggleChar('${c}')"><span class="drag-hd">⋮</span><span>${c}</span><span class="del-btn" onclick="event.stopPropagation();cDeleteChar(${i})">×</span></span>`;
+  }).join('');
+}
+
+window.cToggleChar = function(val) {
+  const idx = cState.character.indexOf(val);
+  if (idx >= 0) cState.character.splice(idx, 1); else cState.character.push(val);
+  cRenderChar(); cRenderSelected();
+};
+window.cToggleCharManage = function() { cState.charManage = !cState.charManage; document.getElementById('cCharManageBtn').classList.toggle('active', cState.charManage); cRenderChar(); };
+window.cShowCharAddForm = function() { document.getElementById('cCharAddForm').style.display = 'flex'; document.getElementById('cCharAddInput').value = ''; document.getElementById('cCharAddInput').focus(); };
+window.cCancelAddChar = function() { document.getElementById('cCharAddForm').style.display = 'none'; };
+window.cConfirmAddChar = function() {
+  const name = document.getElementById('cCharAddInput').value.trim();
+  if (!name) { cToast('请输入关键词'); return; }
+  if (cCharData.includes(name)) { cToast('已存在'); return; }
+  cCharData.push(name);
+  cCancelAddChar(); cRenderChar(); cToast('已新增: ' + name);
+};
+window.cDeleteChar = function(index) {
+  const c = cCharData[index];
+  cState.character = cState.character.filter(k => k !== c);
+  cCharData.splice(index, 1);
+  cRenderChar(); cRenderSelected(); cToast('已删除: ' + c);
+};
+
+// Emotion (single, no manage)
+function cRenderEmotion() {
+  document.getElementById('cEmotionGrid').innerHTML = cEmotionData.map(e => `<span class="chip${cState.emotion===e?' selected':''}" data-value="${e}" onclick="cSelectEmotion('${e}')">${e}</span>`).join('');
+}
+window.cSelectEmotion = function(val) { cState.emotion = (cState.emotion === val) ? null : val; cRenderEmotion(); cRenderSelected(); };
+
+// Background (single, no manage)
+function cRenderBg() {
+  document.getElementById('cBgGrid').innerHTML = cBgData.map(b => `<span class="chip${cState.background===b?' selected':''}" data-value="${b}" onclick="cSelectBg('${b}')">${b}</span>`).join('');
+}
+window.cSelectBg = function(val) { cState.background = (cState.background === val) ? null : val; cRenderBg(); cRenderSelected(); };
+
+// Custom tags
+window.cAddCustomTag = function(e) { if (e && e.key !== 'Enter') return; if (e) e.preventDefault(); cAddCustomTagBtn(); };
+window.cAddCustomTagBtn = function() {
+  const input = document.getElementById('cCustomInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (cState.customTags.includes(name)) { cToast('标签已存在'); return; }
+  cState.customTags.push(name);
+  input.value = '';
+  cRenderCustom(); cRenderSelected();
+};
+window.cRemoveCustomTag = function(name) {
+  cState.customTags = cState.customTags.filter(t => t !== name);
+  cRenderCustom(); cRenderSelected();
+};
+function cRenderCustom() {
+  const grid = document.getElementById('cCustomGrid');
+  if (cState.customTags.length === 0) { grid.innerHTML = '<span class="empty-hint" id="cCustomEmpty">暂无自定义标签</span>'; return; }
+  grid.innerHTML = cState.customTags.map(t => `<span class="chip custom-tag">${t}<span class="custom-remove" onclick="cRemoveCustomTag('${t}')">×</span></span>`).join('');
+}
+
+// Drag & Drop (plot & char only)
+let cDraggedIdx = null;
+window.cDragStart = function(e, type, index) {
+  if (e.target.classList.contains('del-btn')) { e.preventDefault(); return; }
+  if (type !== 'plot' && type !== 'char') return;
+  cDraggedIdx = { type, index };
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', '');
+};
+window.cDragOver = function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; };
+window.cDrop = function(e, type, targetIdx) {
+  e.preventDefault();
+  if (!cDraggedIdx || cDraggedIdx.type !== type) return;
+  const arr = type === 'plot' ? cPlotData : cCharData;
+  const src = cDraggedIdx.index;
+  if (src === targetIdx) { cDraggedIdx = null; return; }
+  const [item] = arr.splice(src, 1);
+  arr.splice(targetIdx, 0, item);
+  cDraggedIdx = null;
+  if (type === 'plot') cRenderPlot(); else cRenderChar();
+};
+
+// Right panel
+function cRenderSelected() {
+  const panel = document.getElementById('cSelectedPanel');
+  let total = 0; let html = '';
+  if (cState.mainCategory) {
+    total++;
+    const cat = cAllMain.find(c => c.name === cState.mainCategory);
+    html += `<div class="sel-group"><div class="sel-group-header">▸ 主分类</div><span class="sel-tag src-${cat?cat.cls:'male'}">${cState.mainCategory}<span class="sel-tag-x" onclick="cRemoveSel('main')">×</span></span></div>`;
+  }
+  if (cState.plot.length > 0) {
+    total += cState.plot.length;
+    html += `<div class="sel-group"><div class="sel-group-header">▸ 情节分类 <span style="font-weight:400;color:var(--muted)">${cState.plot.length}项</span></div>`;
+    cState.plot.forEach(p => { html += `<span class="sel-tag src-plot">${p}<span class="sel-tag-x" onclick="cRemoveSel('plot','${p}')">×</span></span>`; });
+    html += `</div>`;
+  }
+  if (cState.character.length > 0) {
+    total += cState.character.length;
+    html += `<div class="sel-group"><div class="sel-group-header">▸ 角色关键词 <span style="font-weight:400;color:var(--muted)">${cState.character.length}项</span></div>`;
+    cState.character.forEach(c => { html += `<span class="sel-tag src-char">${c}<span class="sel-tag-x" onclick="cRemoveSel('char','${c}')">×</span></span>`; });
+    html += `</div>`;
+  }
+  if (cState.emotion) { total++; html += `<div class="sel-group"><div class="sel-group-header">▸ 情绪过程</div><span class="sel-tag src-emotion">${cState.emotion}<span class="sel-tag-x" onclick="cRemoveSel('emotion')">×</span></span></div>`; }
+  if (cState.background) { total++; html += `<div class="sel-group"><div class="sel-group-header">▸ 故事背景</div><span class="sel-tag src-bg">${cState.background}<span class="sel-tag-x" onclick="cRemoveSel('bg')">×</span></span></div>`; }
+  if (cState.customTags.length > 0) {
+    total += cState.customTags.length;
+    html += `<div class="sel-group"><div class="sel-group-header">▸ 自定义标签 <span style="font-weight:400;color:var(--muted)">${cState.customTags.length}项</span></div>`;
+    cState.customTags.forEach(t => { html += `<span class="sel-tag src-custom">${t}<span class="sel-tag-x" onclick="cRemoveSel('custom','${t}')">×</span></span>`; });
+    html += `</div>`;
+  }
+  if (!html) html = '<span class="empty-hint">尚未选择任何分类</span>';
+  panel.innerHTML = html;
+  document.getElementById('cSelCount').textContent = total + ' 项';
+}
+
+window.cRemoveSel = function(type, val) {
+  switch(type) {
+    case 'main': cState.mainCategory = null; cRenderMain(); break;
+    case 'plot': cState.plot = cState.plot.filter(p => p !== val); cRenderPlot(); break;
+    case 'char': cState.character = cState.character.filter(c => c !== val); cRenderChar(); break;
+    case 'emotion': cState.emotion = null; cRenderEmotion(); break;
+    case 'bg': cState.background = null; cRenderBg(); break;
+    case 'custom': cState.customTags = cState.customTags.filter(t => t !== val); cRenderCustom(); break;
+  }
+  cRenderSelected();
+};
+
+// Save
+window.catHandleSave = function() {
+  const output = { mainCategory: cState.mainCategory, plotCategories: cState.plot, characterKeywords: cState.character, emotionProcess: cState.emotion, storyBackground: cState.background, customTags: cState.customTags };
+  localStorage.setItem('step1_selections', JSON.stringify(output));
+  localStorage.setItem('step1_plotData', JSON.stringify(cPlotData));
+  localStorage.setItem('step1_charData', JSON.stringify(cCharData));
+  localStorage.setItem('step1_emotionData', JSON.stringify(cEmotionData));
+  localStorage.setItem('step1_bgData', JSON.stringify(cBgData));
+  localStorage.setItem('step1_customTags', JSON.stringify(cState.customTags));
+  cToast('✅ 已保存');
+};
+
+function cToast(msg) {
+  const t = document.getElementById('cToast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 1800);
+}
+
+// Init
+(function init() {
+  const saved = localStorage.getItem('step1_selections');
+  if (saved) try {
+    const s = JSON.parse(saved);
+    cState.mainCategory = s.mainCategory || null;
+    cState.plot = s.plotCategories || [];
+    cState.character = s.characterKeywords || [];
+    cState.emotion = Array.isArray(s.emotionProcess) ? s.emotionProcess[0] || null : (s.emotionProcess || null);
+    cState.background = Array.isArray(s.storyBackground) ? s.storyBackground[0] || null : (s.storyBackground || null);
+    cState.customTags = s.customTags || [];
+  } catch(e) {}
+  const p = localStorage.getItem('step1_plotData'); if (p) try { cPlotData = JSON.parse(p); } catch(e) {}
+  const ch = localStorage.getItem('step1_charData'); if (ch) try { cCharData = JSON.parse(ch); } catch(e) {}
+  const em = localStorage.getItem('step1_emotionData'); if (em) try { cEmotionData = JSON.parse(em); } catch(e) {}
+  const bg = localStorage.getItem('step1_bgData'); if (bg) try { cBgData = JSON.parse(bg); } catch(e) {}
+  const ct = localStorage.getItem('step1_customTags'); if (ct) try { cState.customTags = JSON.parse(ct); } catch(e) {}
+  cRenderMain(); cRenderPlot(); cRenderChar(); cRenderEmotion(); cRenderBg(); cRenderCustom(); cRenderSelected();
+})();
+
+})();
+</script>
+
+</body>
+</html>
