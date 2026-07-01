@@ -132,7 +132,7 @@ export default function PlanSelectPage() {
           <AlertCircle className="w-8 h-8 text-[#DC2626] opacity-60" />
           <p className="text-xs text-muted-foreground">{loadError}</p>
           <button
-            className="px-3 py-1.5 text-xs border border-foreground hover:bg-hover cursor-pointer inline-flex items-center gap-1.5"
+            className="px-3 py-1.5 text-xs border border-border rounded-sm hover:bg-muted cursor-pointer inline-flex items-center gap-1.5"
             onClick={() => { if (novelId) loadSetting(novelId).then(() => setHasLoaded(true)).catch((err: any) => setLoadError(err?.message || '加载失败')).finally(() => setIsLoading(false)); }}
           >
             <RefreshCw className="w-3 h-3" /> 重试

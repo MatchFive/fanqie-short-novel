@@ -78,8 +78,8 @@ export default function StudioLayout() {
               aria-current={location.pathname === '/' ? 'page' : undefined}
               aria-label="首页"
               onKeyDown={(e) => { if (e.key === 'Enter') navigate('/'); }}
-              className={`min-h-[44px] px-2 py-1.5 text-[13px] cursor-pointer flex items-center gap-1.5 mb-1 ${
-                location.pathname === '/' ? 'bg-foreground text-primary-foreground' : 'hover:bg-hover'
+              className={`min-h-[44px] px-2 py-1.5 text-[13px] cursor-pointer flex items-center gap-1.5 mb-1 rounded-md ${
+                location.pathname === '/' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
               }`}
             >
               <span className="w-5 h-5 flex items-center justify-center flex-shrink-0" aria-hidden="true">🏠</span>
@@ -96,17 +96,17 @@ export default function StudioLayout() {
                   aria-current={isActive ? 'step' : undefined}
                   aria-label={`步骤${item.step}: ${item.label}${isDone ? ' - 已完成' : ''}`}
                   onKeyDown={(e) => { if (e.key === 'Enter') navWithNovel(item.path); }}
-                  className={`min-h-[44px] px-2 py-1.5 text-[13px] cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[44px] px-2 py-1.5 text-[13px] cursor-pointer flex items-center gap-1.5 rounded-md ${
                     isActive
-                      ? 'bg-foreground text-primary-foreground'
+                      ? 'bg-primary text-primary-foreground'
                       : isDone
-                        ? 'text-foreground hover:bg-hover'
-                        : 'text-muted-foreground hover:bg-hover'
+                        ? 'text-foreground hover:bg-muted'
+                        : 'text-muted-foreground hover:bg-muted'
                   }`}
                 >
                   <span
-                    className={`w-5 h-5 border text-[10px] flex items-center justify-center flex-shrink-0 ${
-                      isActive ? 'border-primary-foreground' : isDone ? 'bg-foreground text-primary-foreground border-foreground' : 'border-border'
+                    className={`w-5 h-5 border text-[10px] flex items-center justify-center flex-shrink-0 rounded-sm ${
+                      isActive ? 'border-primary-foreground' : isDone ? 'bg-primary text-primary-foreground border-primary' : 'border-border'
                     }`}
                     aria-hidden="true"
                   >
@@ -136,7 +136,7 @@ export default function StudioLayout() {
               ))}
             </nav>
           )}
-          <div className="p-6">
+          <div className="px-8 py-6">
             <ErrorBoundary>
               <Outlet />
             </ErrorBoundary>

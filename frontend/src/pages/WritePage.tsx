@@ -471,7 +471,7 @@ export default function WritePage() {
               <p className="text-xs text-muted-foreground leading-relaxed">{confirmDialog.message}</p>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}>取消</Button>
-                <Button size="sm" className="text-xs h-7 border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626] hover:text-white" onClick={confirmDialog.onConfirm}>确认</Button>
+                <Button size="sm" variant="destructive" className="text-xs h-7" onClick={confirmDialog.onConfirm}>确认</Button>
               </div>
             </div>
           </div>

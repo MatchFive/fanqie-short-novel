@@ -243,7 +243,7 @@ export default function TrendingPage() {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => navigate('/')}
-          className="p-1.5 border border-border hover:bg-hover transition-colors cursor-pointer"
+          className="p-1.5 border border-border rounded-md hover:bg-muted transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
@@ -251,13 +251,13 @@ export default function TrendingPage() {
       </div>
 
       {/* 模式切换 Tab */}
-      <div className="flex gap-1 mb-6 border border-border p-1 w-fit">
+      <div className="flex gap-1 mb-6 border border-border rounded-md p-1 w-fit">
         <button
           onClick={() => setMode('hotspot')}
-          className={`px-4 py-1.5 text-sm flex items-center gap-1.5 transition-colors cursor-pointer ${
+          className={`px-4 py-1.5 text-sm flex items-center gap-1.5 rounded-sm transition-colors cursor-pointer ${
             mode === 'hotspot'
-              ? 'bg-foreground text-primary-foreground'
-              : 'hover:bg-hover'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-muted'
           }`}
         >
           <Flame className="w-3.5 h-3.5" />
@@ -265,10 +265,10 @@ export default function TrendingPage() {
         </button>
         <button
           onClick={() => setMode('history')}
-          className={`px-4 py-1.5 text-sm flex items-center gap-1.5 transition-colors cursor-pointer ${
+          className={`px-4 py-1.5 text-sm flex items-center gap-1.5 rounded-sm transition-colors cursor-pointer ${
             mode === 'history'
-              ? 'bg-foreground text-primary-foreground'
-              : 'hover:bg-hover'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-muted'
           }`}
         >
           <Clock className="w-3.5 h-3.5" />
@@ -276,10 +276,10 @@ export default function TrendingPage() {
         </button>
         <button
           onClick={() => setMode('custom')}
-          className={`px-4 py-1.5 text-sm flex items-center gap-1.5 transition-colors cursor-pointer ${
+          className={`px-4 py-1.5 text-sm flex items-center gap-1.5 rounded-sm transition-colors cursor-pointer ${
             mode === 'custom'
-              ? 'bg-foreground text-primary-foreground'
-              : 'hover:bg-hover'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-muted'
           }`}
         >
           <PenLine className="w-3.5 h-3.5" />
@@ -296,10 +296,10 @@ export default function TrendingPage() {
               <button
                 key={len}
                 onClick={() => setTargetLength(len)}
-                className={`px-2.5 py-0.5 text-xs border cursor-pointer transition-colors ${
+                className={`px-2.5 py-0.5 text-xs border rounded-sm cursor-pointer transition-colors ${
                   targetLength === len
-                    ? 'border-foreground bg-foreground text-primary-foreground'
-                    : 'border-border hover:bg-hover'
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border hover:bg-muted'
                 }`}
               >
                 {len >= 10000 ? `${len / 10000}万` : len.toLocaleString()}
@@ -319,7 +319,7 @@ export default function TrendingPage() {
             <button
               onClick={handleRefresh}
               disabled={phase === 'loading' || phase === 'confirming'}
-              className="flex items-center gap-1 px-3 py-1 text-xs border border-border hover:bg-hover transition-colors cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1 text-xs border border-border rounded-sm hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
             >
               <RefreshCw className={`w-3 h-3 ${phase === 'loading' ? 'animate-spin' : ''}`} />
               刷新热搜
@@ -342,7 +342,7 @@ export default function TrendingPage() {
               <p className="text-xs text-muted-foreground mb-4">未能获取到热搜内容，请稍后重试或切换到自由输入模式</p>
               <button
                 onClick={handleRefresh}
-                className="px-4 py-2 text-xs border border-foreground hover:bg-hover cursor-pointer"
+                className="px-4 py-2 text-xs border border-border rounded-sm hover:bg-muted cursor-pointer"
               >
                 <RefreshCw className="w-3 h-3 inline mr-1" />
                 重试
@@ -352,13 +352,13 @@ export default function TrendingPage() {
 
           {/* 错误态 */}
           {phase === 'error' && (
-            <div className="border border-[#DC2626] p-6 text-center">
-              <p className="text-sm text-[#DC2626] mb-2">⚠️ {errorMsg}</p>
+            <div className="border border-destructive rounded-md p-6 text-center">
+              <p className="text-sm text-destructive mb-2">⚠️ {errorMsg}</p>
               <p className="text-xs text-muted-foreground mb-4">请稍后重试，或切换到自由输入模式输入你身边的故事</p>
               <div className="flex gap-2 justify-center">
                 <button
                   onClick={handleRefresh}
-                  className="px-4 py-2 text-xs border border-foreground hover:bg-hover cursor-pointer"
+                  className="px-4 py-2 text-xs border border-border rounded-sm hover:bg-muted cursor-pointer"
                 >
                   <RefreshCw className="w-3 h-3 inline mr-1" />
                   重试
@@ -368,7 +368,7 @@ export default function TrendingPage() {
                     setMode('custom');
                     setPhase('analysis');
                   }}
-                  className="px-4 py-2 text-xs border border-foreground bg-foreground text-primary-foreground cursor-pointer"
+                  className="px-4 py-2 text-xs border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer"
                 >
                   切换自由输入
                 </button>
@@ -393,7 +393,7 @@ export default function TrendingPage() {
                   className="border border-border bg-background overflow-hidden"
                 >
                   {/* 事件标题行 */}
-                  <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-hover/30 transition-colors"
+                  <div                   className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 rounded-md transition-colors"
                     onClick={() => setExpandedIdx(expandedIdx === eventIdx ? null : eventIdx)}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -426,7 +426,7 @@ export default function TrendingPage() {
                       {analysis.suggestions.map((suggestion) => (
                         <div
                           key={suggestion.suggestion_id}
-                          className="border border-border p-3 hover:bg-hover/20 transition-colors"
+                          className="border border-border rounded-sm p-3 hover:bg-muted/40 transition-colors"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
@@ -449,7 +449,7 @@ export default function TrendingPage() {
                                 handleConfirm(eventIdx, suggestion);
                               }}
                               disabled={phase === 'confirming'}
-                              className="flex-shrink-0 px-3 py-1.5 text-xs border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 whitespace-nowrap"
+                              className="flex-shrink-0 px-3 py-1.5 text-xs border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 whitespace-nowrap"
                             >
                               选这个创作
                             </button>
@@ -485,10 +485,10 @@ export default function TrendingPage() {
                 <button
                   key={s.value}
                   onClick={() => handleHistorySourceChange(s.value)}
-                  className={`px-2.5 py-0.5 text-xs border cursor-pointer transition-colors ${
+                  className={`px-2.5 py-0.5 text-xs border rounded-sm cursor-pointer transition-colors ${
                     historySource === s.value
-                      ? 'border-foreground bg-foreground text-primary-foreground'
-                      : 'border-border hover:bg-hover'
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border hover:bg-muted'
                   }`}
                 >
                   {s.label}
@@ -499,10 +499,10 @@ export default function TrendingPage() {
             <div className="flex gap-1">
               <button
                 onClick={() => handleHistorySortChange('fetched_at')}
-                className={`px-2.5 py-0.5 text-xs border cursor-pointer transition-colors ${
+                className={`px-2.5 py-0.5 text-xs border rounded-sm cursor-pointer transition-colors ${
                   historySortBy === 'fetched_at'
-                    ? 'border-foreground bg-foreground text-primary-foreground'
-                    : 'border-border hover:bg-hover'
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border hover:bg-muted'
                 }`}
               >
                 <Clock className="w-3 h-3 inline mr-1" />
@@ -510,10 +510,10 @@ export default function TrendingPage() {
               </button>
               <button
                 onClick={() => handleHistorySortChange('usage_count')}
-                className={`px-2.5 py-0.5 text-xs border cursor-pointer transition-colors ${
+                className={`px-2.5 py-0.5 text-xs border rounded-sm cursor-pointer transition-colors ${
                   historySortBy === 'usage_count'
-                    ? 'border-foreground bg-foreground text-primary-foreground'
-                    : 'border-border hover:bg-hover'
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border hover:bg-muted'
                 }`}
               >
                 <Hash className="w-3 h-3 inline mr-1" />
@@ -549,7 +549,7 @@ export default function TrendingPage() {
                 >
                   {/* 事件标题行 */}
                   <div
-                    className="flex items-center justify-between p-4 cursor-pointer hover:bg-hover/30 transition-colors"
+                    className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 rounded-md transition-colors"
                     onClick={() => setHistoryExpandedId(historyExpandedId === item.id ? null : item.id)}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -607,7 +607,7 @@ export default function TrendingPage() {
                       {item.ai_suggestions.map((suggestion) => (
                         <div
                           key={suggestion.suggestion_id}
-                          className="border border-border p-3 hover:bg-hover/20 transition-colors"
+                          className="border border-border rounded-sm p-3 hover:bg-muted/40 transition-colors"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
@@ -630,7 +630,7 @@ export default function TrendingPage() {
                                 handleHistoryConfirm(item, suggestion);
                               }}
                               disabled={phase === 'confirming'}
-                              className="flex-shrink-0 px-3 py-1.5 text-xs border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 whitespace-nowrap"
+                              className="flex-shrink-0 px-3 py-1.5 text-xs border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 whitespace-nowrap"
                             >
                               选这个创作
                             </button>
@@ -652,14 +652,14 @@ export default function TrendingPage() {
                     <button
                       onClick={() => handleHistoryPageChange(historyPage - 1)}
                       disabled={historyPage <= 1}
-                      className="p-1.5 border border-border hover:bg-hover cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-1.5 border border-border rounded-md hover:bg-muted cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleHistoryPageChange(historyPage + 1)}
                       disabled={historyPage >= Math.ceil(historyTotal / historyPageSize)}
-                      className="p-1.5 border border-border hover:bg-hover cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-1.5 border border-border rounded-md hover:bg-muted cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -680,21 +680,21 @@ export default function TrendingPage() {
 
           <div className="border border-border p-4 bg-background">
             <div className="mb-4">
-              <label className="block text-xs font-semibold mb-1.5">事件标题 <span className="text-[#DC2626]">*</span></label>
+              <label className="block text-xs font-semibold mb-1.5">事件标题 <span className="text-destructive">*</span></label>
               <input
                 type="text"
                 value={customTitle}
                 onChange={(e) => setCustomTitle(e.target.value)}
                 placeholder="给事件起个标题，例如：邻居深夜总传来奇怪的敲墙声..."
                 maxLength={30}
-                className="w-full px-3 py-2 text-sm border border-border outline-none focus:border-foreground"
+                className="w-full px-3 py-2 text-sm border border-border rounded-md outline-none focus:border-primary"
                 disabled={phase === 'loading' || phase === 'confirming'}
               />
               <p className="text-[11px] text-muted-foreground mt-0.5">{customTitle.length}/30</p>
             </div>
 
             <div className="mb-4">
-              <label className="block text-xs font-semibold mb-1.5">事件描述 <span className="text-[#DC2626]">*</span></label>
+              <label className="block text-xs font-semibold mb-1.5">事件描述 <span className="text-destructive">*</span></label>
               <textarea
                 value={customDescription}
                 onChange={(e) => setCustomDescription(e.target.value)}
@@ -704,21 +704,21 @@ export default function TrendingPage() {
 "我家住在一个老小区，每天晚上11点开始，隔壁就会传来有规律的敲墙声，三短一长。刚开始以为邻居在装修，但持续了两个月。后来物业告诉我们，隔壁根本没人住已经半年了。最后发现是..."`}
                 rows={6}
                 maxLength={500}
-                className="w-full px-3 py-2 text-sm border border-border outline-none focus:border-foreground resize-none"
+                className="w-full px-3 py-2 text-sm border border-border rounded-md outline-none focus:border-primary resize-none"
                 disabled={phase === 'loading' || phase === 'confirming'}
               />
               <p className="text-[11px] text-muted-foreground mt-0.5">{customDescription.length}/500</p>
             </div>
 
             {customError && (
-              <p className="text-xs text-[#DC2626] mb-3">{customError}</p>
+              <p className="text-xs text-destructive mb-3">{customError}</p>
             )}
 
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCustomAnalyze}
                 disabled={phase === 'loading' || phase === 'confirming'}
-                className="px-5 py-2 text-sm border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 flex items-center gap-1.5"
+                className="px-5 py-2 text-sm border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 flex items-center gap-1.5"
               >
                 {phase === 'loading' ? (
                   <>
@@ -737,8 +737,8 @@ export default function TrendingPage() {
 
           {/* 自定义事件分析结果 */}
           {phase === 'error' && mode === 'custom' && errorMsg && (
-            <div className="border border-[#DC2626] p-4 mt-4 text-center">
-              <p className="text-sm text-[#DC2626] mb-1">⚠️ {errorMsg}</p>
+            <div className="border border-destructive rounded-md p-4 mt-4 text-center">
+              <p className="text-sm text-destructive mb-1">⚠️ {errorMsg}</p>
             </div>
           )}
 
@@ -761,7 +761,7 @@ export default function TrendingPage() {
                     {analysis.suggestions.map((suggestion) => (
                       <div
                         key={suggestion.suggestion_id}
-                        className="border border-border p-3 hover:bg-hover/20 transition-colors"
+                        className="border border-border rounded-sm p-3 hover:bg-muted/40 transition-colors"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">
@@ -780,7 +780,7 @@ export default function TrendingPage() {
                           <button
                             onClick={() => handleConfirm(eventIdx, suggestion)}
                             disabled={phase === 'confirming'}
-                            className="flex-shrink-0 px-3 py-1.5 text-xs border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 whitespace-nowrap"
+                            className="flex-shrink-0 px-3 py-1.5 text-xs border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85 transition-opacity disabled:opacity-50 whitespace-nowrap"
                           >
                             选这个创作
                           </button>

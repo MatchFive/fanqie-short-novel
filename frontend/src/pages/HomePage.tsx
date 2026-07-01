@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listNovelsApi, deleteNovelApi, createShortStoryApi, type NovelListItem } from '@/api/shortStory';
 import { useAppStore } from '@/stores/appStore';
-import { Loader2, Trash2, FileText, Shuffle, Flame } from 'lucide-react';
+import { Loader2, Trash2, FileText, Shuffle, Flame, Settings, Package } from 'lucide-react';
+import SettingsDialog from '@/components/SettingsDialog';
+import ExportDialog from '@/components/ExportDialog';
 
 interface NovelCard {
   id: string;
@@ -68,6 +70,8 @@ export default function HomePage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [stats, setStats] = useState({ total: 0, done: 0, progress: 0, totalWords: 0 });
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const showToast = useAppStore((s) => s.showToast);
 
   /** 直接创建新作品并进入创作流程 */
@@ -154,22 +158,42 @@ export default function HomePage() {
           <h1 className="text-xl font-bold mb-1">下午好 👋</h1>
           <p className="text-[13px] text-muted-foreground">番茄小说创作工作台</p>
         </div>
-        <div className="grid grid-cols-4 gap-2">
-          <div className="border border-border p-2 bg-background min-w-[90px]">
-            <div className="text-[18px] font-bold">{stats.total}</div>
-            <div className="text-[10px] text-muted-foreground">全部作品</div>
+        <div className="flex items-start gap-4">
+          <div className="grid grid-cols-4 gap-2">
+            <div className="border border-border rounded-md p-3 bg-card min-w-[90px]">
+              <div className="text-[18px] font-bold">{stats.total}</div>
+              <div className="text-[10px] text-muted-foreground">全部作品</div>
+            </div>
+            <div className="border border-border rounded-md p-3 bg-card min-w-[90px]">
+              <div className="text-[18px] font-bold">{stats.done}</div>
+              <div className="text-[10px] text-muted-foreground">已完成</div>
+            </div>
+            <div className="border border-border rounded-md p-3 bg-card min-w-[90px]">
+              <div className="text-[18px] font-bold">{stats.progress}</div>
+              <div className="text-[10px] text-muted-foreground">创作中</div>
+            </div>
+            <div className="border border-border rounded-md p-3 bg-card min-w-[90px]">
+              <div className="text-[18px] font-bold">{formatWords(stats.totalWords)}</div>
+              <div className="text-[10px] text-muted-foreground">累计字数</div>
+            </div>
           </div>
-          <div className="border border-border p-2 bg-background min-w-[90px]">
-            <div className="text-[18px] font-bold">{stats.done}</div>
-            <div className="text-[10px] text-muted-foreground">已完成</div>
-          </div>
-          <div className="border border-border p-2 bg-background min-w-[90px]">
-            <div className="text-[18px] font-bold">{stats.progress}</div>
-            <div className="text-[10px] text-muted-foreground">创作中</div>
-          </div>
-          <div className="border border-border p-2 bg-background min-w-[90px]">
-            <div className="text-[18px] font-bold">{formatWords(stats.totalWords)}</div>
-            <div className="text-[10px] text-muted-foreground">累计字数</div>
+          <div className="flex items-center gap-1 pt-1">
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer border border-border rounded-md hover:bg-muted"
+              aria-label="设置"
+              title="设置"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setExportOpen(true)}
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer border border-border rounded-md hover:bg-muted"
+              aria-label="导出数据"
+              title="导出数据"
+            >
+              <Package className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -179,12 +203,12 @@ export default function HomePage() {
         {/* 创建短篇小说 */}
         <div
           onClick={() => handleCreate('manual')}
-          className={`border border-border bg-background p-4 flex items-center justify-between group transition-colors ${
-            isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-foreground'
+          className={`border border-border rounded-md bg-card p-5 flex items-center justify-between group transition-all ${
+            isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-primary/30 hover:shadow-sm'
           }`}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors flex-shrink-0">
+            <div className="w-9 h-9 border border-border rounded-md flex items-center justify-center bg-secondary/50 group-hover:bg-secondary transition-colors flex-shrink-0">
               <FileText className="w-4 h-4" />
             </div>
             <div className="min-w-0">
@@ -192,18 +216,18 @@ export default function HomePage() {
               <div className="text-xs text-muted-foreground mt-0.5 truncate">手动配置分类→爽点→方案...</div>
             </div>
           </div>
-          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors flex-shrink-0 ml-2">开始</span>
+          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border rounded-sm group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors flex-shrink-0 ml-2">开始</span>
         </div>
 
         {/* 一键随机创作 */}
         <div
           onClick={() => handleCreate('random')}
-          className={`border border-border bg-background p-4 flex items-center justify-between group transition-colors ${
-            isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-foreground'
+          className={`border border-border rounded-md bg-card p-5 flex items-center justify-between group transition-all ${
+            isCreating ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-primary/30 hover:shadow-sm'
           }`}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 border border-border flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/50 transition-colors flex-shrink-0">
+            <div className="w-9 h-9 border border-border rounded-md flex items-center justify-center bg-secondary/50 group-hover:bg-secondary transition-colors flex-shrink-0">
               <Shuffle className="w-4 h-4" />
             </div>
             <div className="min-w-0">
@@ -211,29 +235,29 @@ export default function HomePage() {
               <div className="text-xs text-muted-foreground mt-0.5 truncate">随机组合预置要素快速启动</div>
             </div>
           </div>
-          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors flex-shrink-0 ml-2">开始</span>
+          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border rounded-sm group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors flex-shrink-0 ml-2">开始</span>
         </div>
 
         {/* 紧跟时事创作 */}
         <div
           onClick={() => navigate('/trending')}
-          className="border border-border bg-background p-4 cursor-pointer hover:border-foreground transition-colors flex items-center justify-between group relative overflow-hidden"
+          className="border border-border rounded-md bg-card p-5 cursor-pointer hover:border-primary/30 hover:shadow-sm transition-all flex items-center justify-between group relative overflow-hidden"
         >
           <div className="absolute top-0 right-0">
-            <span className="inline-block px-2 py-0.5 text-[10px] font-bold bg-[#DC2626] text-white rounded-bl-sm">
+            <span className="inline-block px-2 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded-bl-sm">
               NEW
             </span>
           </div>
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 border border-[#F97316]/30 bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors flex-shrink-0">
-              <Flame className="w-4 h-4 text-[#F97316]" />
+            <div className="w-9 h-9 border border-primary/30 rounded-md bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+              <Flame className="w-4 h-4 text-primary" />
             </div>
             <div className="min-w-0">
               <div className="text-sm font-semibold truncate">🔥 紧跟时事创作</div>
               <div className="text-xs text-muted-foreground mt-0.5 truncate">AI分析热点/你讲身边事→自动创作</div>
             </div>
           </div>
-          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border group-hover:bg-foreground group-hover:text-primary-foreground transition-colors flex-shrink-0 ml-2">开始</span>
+          <span className="text-xs text-muted-foreground px-2.5 py-1 border border-border rounded-sm group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors flex-shrink-0 ml-2">开始</span>
         </div>
       </div>
 
@@ -244,10 +268,10 @@ export default function HomePage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-2.5 py-1 text-xs border cursor-pointer transition-colors ${
+              className={`px-2.5 py-1 text-xs border rounded-sm cursor-pointer transition-colors ${
                 filter === f
-                  ? 'border-foreground bg-foreground text-primary-foreground'
-                  : 'border-border hover:bg-hover'
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border hover:bg-secondary'
               }`}
             >
               {f === 'all' ? '全部' : f === 'progress' ? '创作中' : f === 'done' ? '已完成' : '草稿'}
@@ -255,7 +279,7 @@ export default function HomePage() {
           ))}
         </div>
         <input
-          className="px-3 py-1.5 text-[13px] border border-border outline-none w-[200px] focus:border-foreground"
+          className="px-3 py-1.5 text-[13px] border border-border rounded-md outline-none w-[200px] focus:border-primary"
           placeholder="搜索作品..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -272,11 +296,11 @@ export default function HomePage() {
 
       {/* 错误态 */}
       {error && !loading && (
-        <div className="border border-[#DC2626] p-6 text-center">
-          <p className="text-sm text-[#DC2626] mb-2">加载失败</p>
+        <div className="border border-destructive rounded-md p-6 text-center">
+          <p className="text-sm text-destructive mb-2">加载失败</p>
           <p className="text-xs text-muted-foreground mb-3">{error}</p>
           <button
-            className="px-3 py-1.5 text-xs border border-foreground"
+            className="px-3 py-1.5 text-xs border border-border rounded-sm hover:border-foreground transition-colors"
             onClick={() => window.location.reload()}
           >
             重试
@@ -297,7 +321,7 @@ export default function HomePage() {
           <button
             onClick={() => handleCreate('manual')}
             disabled={isCreating}
-            className="px-4 py-2 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-[13px] border border-primary bg-primary text-primary-foreground rounded-md cursor-pointer hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? '创建中...' : '+ 新建作品'}
           </button>
@@ -314,7 +338,7 @@ export default function HomePage() {
               <div
                 key={novel.id}
                 onClick={() => navigate(novel.navigateTo)}
-                className="group relative border border-border bg-background cursor-pointer overflow-hidden rounded-sm transition-shadow hover:shadow-md"
+                className="group relative border border-border bg-card cursor-pointer overflow-hidden rounded-md transition-all hover:border-primary/30 hover:shadow-sm"
               >
                 {/* 卡片主体 */}
                 <div className="p-4">
@@ -363,7 +387,7 @@ export default function HomePage() {
                 </div>
 
                 {/* 左侧状态色条 */}
-                <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${
+                <div className={`absolute left-0 top-1 bottom-1 w-1 rounded-l-md ${
                   novel.status === 'done' ? 'bg-[#16A34A]' : novel.status === 'progress' ? 'bg-[#D97706]' : 'bg-border'
                 }`} />
               </div>
@@ -371,6 +395,8 @@ export default function HomePage() {
           })}
         </div>
       )}
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} />
     </div>
   );
 }

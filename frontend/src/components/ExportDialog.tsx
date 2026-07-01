@@ -73,7 +73,7 @@ export default function ExportDialog({ open, onClose }: ExportDialogProps) {
                 <option>异界炼丹师</option>
                 <option>末日重生录</option>
               </select>
-              <button className="px-4 py-2 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85">选择</button>
+              <button className="px-4 py-2 text-[13px] border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85">选择</button>
             </div>
 
             <div className="grid grid-cols-3 gap-3 mt-4">
@@ -81,13 +81,13 @@ export default function ExportDialog({ open, onClose }: ExportDialogProps) {
                 <div className="text-2xl mb-2">📄</div>
                 <div className="font-semibold text-sm mb-1">导出 TXT</div>
                 <div className="text-xs text-muted-foreground mb-3">纯文本格式，适合阅读器导入</div>
-                <button className="w-full px-3 py-1.5 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 flex items-center justify-center">导出 TXT</button>
+                <button className="w-full px-3 py-1.5 text-[13px] border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85 flex items-center justify-center">导出 TXT</button>
               </div>
               <div className="border border-border p-4 bg-background cursor-pointer">
                 <div className="text-2xl mb-2">📋</div>
                 <div className="font-semibold text-sm mb-1">导出 JSON</div>
                 <div className="text-xs text-muted-foreground mb-3">结构化数据，保留所有元信息</div>
-                <button className="w-full px-3 py-1.5 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85 flex items-center justify-center">导出 JSON</button>
+                <button className="w-full px-3 py-1.5 text-[13px] border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85 flex items-center justify-center">导出 JSON</button>
               </div>
               <div className="border border-border p-4 bg-background">
                 <div className="text-2xl mb-2">📚</div>
@@ -115,7 +115,7 @@ export default function ExportDialog({ open, onClose }: ExportDialogProps) {
                 <div className="font-semibold text-sm mb-1">📥 恢复备份</div>
                 <div className="text-xs text-muted-foreground mb-3">从备份文件恢复数据（将覆盖当前数据）</div>
                 <button
-                  className="w-full px-3 py-1.5 text-[13px] border border-[#DC2626] text-[#DC2626] cursor-pointer hover:bg-[#DC2626] hover:text-white flex items-center justify-center"
+                  className="w-full px-3 py-1.5 text-[13px] border border-destructive text-destructive rounded-sm cursor-pointer hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center"
                   onClick={handleRestoreBackup}
                 >选择备份文件</button>
               </div>
@@ -163,7 +163,7 @@ export default function ExportDialog({ open, onClose }: ExportDialogProps) {
               <p className="text-xs text-muted-foreground leading-relaxed">{confirmDialog.message}</p>
               <div className="flex justify-end gap-2">
                 <button
-                  className="px-3 py-1.5 text-[13px] border border-border cursor-pointer hover:bg-hover"
+                  className="px-3 py-1.5 text-[13px] border border-border rounded-sm cursor-pointer hover:bg-muted"
                   onClick={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
                 >取消</button>
                 <button

@@ -38,15 +38,32 @@ interface ManagedPlot extends PlotCategory {
 // 性别 ↔ 颜色映射
 // ---------------------------------------------------------------------------
 const GENDER_CLASS: Record<string, string> = {
-  "男频": "border-[#5B8DEF]",
-  "女频": "border-[#E87D9F]",
-  "通用": "border-[#6BAF6B]",
+  "男频": "border-[#5B8DEF] text-[#5B8DEF] bg-[#5B8DEF]/10",
+  "女频": "border-[#E87D9F] text-[#E87D9F] bg-[#E87D9F]/10",
+  "通用": "border-[#6BAF6B] text-[#6BAF6B] bg-[#6BAF6B]/10",
 };
 
 const GENDER_CLASS_SELECTED: Record<string, string> = {
   "男频": "bg-[#5B8DEF] border-[#5B8DEF] text-white",
   "女频": "bg-[#E87D9F] border-[#E87D9F] text-white",
   "通用": "bg-[#6BAF6B] border-[#6BAF6B] text-white",
+};
+
+// 其他分类颜色：未选中（文字色+淡背景）/ 选中（白文字+纯色背景）
+const TYPE_UNSELECTED: Record<string, string> = {
+  plot: "border-[#e67e22] text-[#e67e22] bg-[#e67e22]/10",
+  char: "border-[#1abc9c] text-[#1abc9c] bg-[#1abc9c]/10",
+  emotion: "border-[#9b59b6] text-[#9b59b6] bg-[#9b59b6]/10",
+  bg: "border-[#7f8c8d] text-[#7f8c8d] bg-[#7f8c8d]/10",
+  custom: "border-[#f39c12] text-[#f39c12] bg-[#f39c12]/10",
+};
+
+const TYPE_SELECTED: Record<string, string> = {
+  plot: "bg-[#e67e22] border-[#e67e22] text-white",
+  char: "bg-[#1abc9c] border-[#1abc9c] text-white",
+  emotion: "bg-[#9b59b6] border-[#9b59b6] text-white",
+  bg: "bg-[#7f8c8d] border-[#7f8c8d] text-white",
+  custom: "bg-[#f39c12] border-[#f39c12] text-white",
 };
 
 // 右侧 tag 颜色
@@ -93,13 +110,13 @@ function Chip({
       onDrop={onDrop}
       onClick={onClick}
       className={`
-        inline-flex items-center gap-0.5 px-[9px] py-[3px] text-[11px] border
+        inline-flex items-center gap-0.5 px-2 py-0.5 text-[11px] border border-border rounded-md
         cursor-pointer select-none whitespace-nowrap transition-colors
         ${
           selected
             ? genderClassSelected ||
-              "bg-foreground text-background border-foreground"
-            : genderClass || "bg-background text-foreground border-muted hover:border-foreground"
+              "bg-primary text-primary-foreground border-primary"
+            : genderClass || "bg-background text-foreground border-border hover:border-primary"
         }
       `}
     >
@@ -107,6 +124,7 @@ function Chip({
     </span>
   );
 }
+
 
 // ---------------------------------------------------------------------------
 // 全页组件
@@ -623,7 +641,7 @@ export default function CategoryConfigPage() {
         <Button
           onClick={handleSave}
           disabled={isSaving || !mainCategory}
-          className="rounded-none text-xs h-8"
+          className="rounded-md text-xs h-8"
         >
           {isSaving ? (
             <>
@@ -641,9 +659,9 @@ export default function CategoryConfigPage() {
       </div>
 
       {/* 左右分栏 */}
-      <div className="flex gap-0">
+      <div className="flex gap-5">
         {/* ============ 左面板 ============ */}
-        <div className="flex-1 min-w-0 pb-12">
+        <div className="flex-1 min-w-0 pb-4">
           {/* ❶ 主分类 */}
           <SectionCard
             title="主分类"
@@ -658,8 +676,9 @@ export default function CategoryConfigPage() {
               </span>
             }
             hint="单选"
+            activeColor={selectedMain ? (selectedMain.gender === "男频" ? "bg-[#5B8DEF]" : selectedMain.gender === "女频" ? "bg-[#E87D9F]" : "bg-[#6BAF6B]") : undefined}
           >
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {mainCategories.map((cat) => (
                 <Chip
                   key={cat.name}
@@ -677,16 +696,17 @@ export default function CategoryConfigPage() {
           {/* ❷ 情节分类 */}
           <SectionCard
             title="情节分类"
+            activeColor={selectedPlots.length > 0 ? "bg-[#e67e22]" : undefined}
             right={
               <div className="flex items-center gap-1.5">
                 <input
-                  className="bg-background border border-muted text-foreground px-2 py-1 text-[10px] outline-none w-[80px] focus:border-foreground"
+                  className="bg-background border border-border text-foreground px-2 py-1 text-[10px] outline-none w-[80px] focus:border-primary rounded-sm"
                   placeholder="搜索..."
                   value={plotSearch}
                   onChange={(e) => setPlotSearch(e.target.value)}
                 />
                 <select
-                  className="bg-background border border-muted text-foreground px-1 py-1 text-[10px] outline-none cursor-pointer"
+                  className="bg-background border border-border text-foreground px-1 py-1 text-[10px] outline-none cursor-pointer rounded-sm"
                   value={plotFilter}
                   onChange={(e) => setPlotFilter(e.target.value)}
                 >
@@ -698,8 +718,8 @@ export default function CategoryConfigPage() {
                   ))}
                 </select>
                 <button
-                  className={`inline-flex items-center justify-center h-[22px] px-2 text-[10px] border transition-colors
-                    ${plotManage ? "bg-foreground text-background border-foreground" : "bg-background text-muted-foreground border-muted hover:border-foreground hover:text-foreground"}`}
+                  className={`inline-flex items-center justify-center h-[22px] px-2 text-[10px] border transition-colors rounded-sm
+                    ${plotManage ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"}`}
                   onClick={togglePlotManage}
                 >
                   <GripVertical className="w-3 h-3 mr-0.5" /> 管理
@@ -708,46 +728,48 @@ export default function CategoryConfigPage() {
             }
           >
             <div
-              className={`flex flex-wrap gap-1.5 ${plotManage ? "select-none" : ""}`}
+              className={`flex flex-wrap gap-2 ${plotManage ? "select-none" : ""}`}
             >
               {filteredPlots.map((p, idx) => (
-                <Chip
-                  key={p._id}
-                  selected={selectedPlots.includes(p.level3)}
-                  onClick={() => togglePlot(p.level3)}
-                  draggable={plotManage}
-                  onDragStart={plotManage ? (e) => onDragStart(e, "plot", idx) : undefined}
-                  onDragOver={plotManage ? onDragOver : undefined}
-                  onDragEnd={plotManage ? onDragEnd : undefined}
-                  onDrop={plotManage ? (e) => onPlotDrop(e, idx) : undefined}
-                >
-                  {plotManage && (
-                    <GripVertical className="w-2.5 h-2.5 text-muted-foreground mr-0.5 cursor-grab" />
-                  )}
-                  <span>
-                    {p.level3}
-                    <span className="block text-[8px] text-muted-foreground leading-tight">
-                      {p.level2}
-                    </span>
+              <Chip
+                key={p._id}
+                selected={selectedPlots.includes(p.level3)}
+                genderClass={TYPE_UNSELECTED.plot}
+                genderClassSelected={TYPE_SELECTED.plot}
+                onClick={() => togglePlot(p.level3)}
+                draggable={plotManage}
+                onDragStart={plotManage ? (e) => onDragStart(e, "plot", idx) : undefined}
+                onDragOver={plotManage ? onDragOver : undefined}
+                onDragEnd={plotManage ? onDragEnd : undefined}
+                onDrop={plotManage ? (e) => onPlotDrop(e, idx) : undefined}
+              >
+                {plotManage && (
+                  <GripVertical className="w-2.5 h-2.5 text-muted-foreground mr-0.5 cursor-grab" />
+                )}
+                <span>
+                  {p.level3}
+                  <span className={`block text-[8px] leading-tight ${selectedPlots.includes(p.level3) ? "text-white" : "text-muted-foreground"}`}>
+                    {p.level2}
                   </span>
-                  {plotManage && (
-                    <X
-                      className="w-3 h-3 text-red-500 ml-1 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deletePlot(p._id);
-                      }}
-                    />
-                  )}
-                </Chip>
+                </span>
+                {plotManage && (
+                  <X
+                    className="w-3 h-3 text-destructive ml-1 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deletePlot(p._id);
+                    }}
+                  />
+                )}
+              </Chip>
               ))}
             </div>
 
             {showPlotAdd && (
-              <div className="flex gap-1 mt-1.5">
+              <div className="flex gap-1 mt-2">
                 <input
                   ref={plotAddInputRef}
-                  className="flex-1 bg-background border border-muted text-foreground px-2 py-1 text-[10px] outline-none focus:border-foreground min-w-[80px]"
+                  className="flex-1 bg-background border border-border text-foreground px-2 py-1 text-[10px] outline-none focus:border-primary min-w-[80px] rounded-sm"
                   placeholder="新情节名称"
                   value={plotAddName}
                   onChange={(e) => setPlotAddName(e.target.value)}
@@ -757,7 +779,7 @@ export default function CategoryConfigPage() {
                   }}
                 />
                 <select
-                  className="bg-background border border-muted text-foreground px-1 py-1 text-[10px] outline-none"
+                  className="bg-background border border-border text-foreground px-1 py-1 text-[10px] outline-none rounded-sm"
                   value={plotAddLevel2}
                   onChange={(e) => setPlotAddLevel2(e.target.value)}
                 >
@@ -769,13 +791,13 @@ export default function CategoryConfigPage() {
                   ))}
                 </select>
                 <button
-                  className="border px-2 py-1 text-[10px] hover:border-green-500 hover:text-green-600"
+                  className="border border-border px-2 py-1 text-[10px] hover:border-green-500 hover:text-green-600 rounded-sm"
                   onClick={confirmPlotAdd}
                 >
                   ✓
                 </button>
                 <button
-                  className="border px-2 py-1 text-[10px] hover:border-red-400 hover:text-red-400"
+                  className="border border-border px-2 py-1 text-[10px] hover:border-red-400 hover:text-red-400 rounded-sm"
                   onClick={cancelPlotAdd}
                 >
                   ✕
@@ -783,7 +805,7 @@ export default function CategoryConfigPage() {
               </div>
             )}
             <button
-              className="inline-flex items-center justify-center w-6 h-6 text-muted-foreground border border-dashed border-muted hover:border-foreground text-sm mt-1"
+              className="inline-flex items-center justify-center w-6 h-6 text-muted-foreground border border-dashed border-border hover:border-primary text-sm mt-2 rounded-sm"
               onClick={showPlotAddForm}
               title="新增情节"
             >
@@ -794,17 +816,18 @@ export default function CategoryConfigPage() {
           {/* ❸ 角色关键词 */}
           <SectionCard
             title="角色关键词"
+            activeColor={selectedCharacters.length > 0 ? "bg-[#1abc9c]" : undefined}
             right={
               <div className="flex items-center gap-1.5">
                 <input
-                  className="bg-background border border-muted text-foreground px-2 py-1 text-[10px] outline-none w-[80px] focus:border-foreground"
+                  className="bg-background border border-border text-foreground px-2 py-1 text-[10px] outline-none w-[80px] focus:border-primary rounded-sm"
                   placeholder="搜索..."
                   value={charSearch}
                   onChange={(e) => setCharSearch(e.target.value)}
                 />
                 <button
-                  className={`inline-flex items-center justify-center h-[22px] px-2 text-[10px] border transition-colors
-                    ${charManage ? "bg-foreground text-background border-foreground" : "bg-background text-muted-foreground border-muted hover:border-foreground hover:text-foreground"}`}
+                  className={`inline-flex items-center justify-center h-[22px] px-2 text-[10px] border transition-colors rounded-sm
+                    ${charManage ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"}`}
                   onClick={toggleCharManage}
                 >
                   <GripVertical className="w-3 h-3 mr-0.5" /> 管理
@@ -813,30 +836,32 @@ export default function CategoryConfigPage() {
             }
           >
             <div
-              className={`flex flex-wrap gap-1.5 ${charManage ? "select-none" : ""}`}
+              className={`flex flex-wrap gap-2 ${charManage ? "select-none" : ""}`}
             >
               {filteredChars.map((tag, idx) => (
-                <Chip
-                  key={tag}
-                  selected={selectedCharacters.includes(tag)}
-                  onClick={() => toggleChar(tag)}
-                  draggable={charManage}
-                  onDragStart={
-                    charManage ? (e) => onDragStart(e, "char", idx) : undefined
-                  }
-                  onDragOver={charManage ? onDragOver : undefined}
-                  onDragEnd={charManage ? onDragEnd : undefined}
-                  onDrop={
-                    charManage ? (e) => onCharDrop(e, idx) : undefined
-                  }
-                >
+              <Chip
+                key={tag}
+                selected={selectedCharacters.includes(tag)}
+                genderClass={TYPE_UNSELECTED.char}
+                genderClassSelected={TYPE_SELECTED.char}
+                onClick={() => toggleChar(tag)}
+                draggable={charManage}
+                onDragStart={
+                  charManage ? (e) => onDragStart(e, "char", idx) : undefined
+                }
+                onDragOver={charManage ? onDragOver : undefined}
+                onDragEnd={charManage ? onDragEnd : undefined}
+                onDrop={
+                  charManage ? (e) => onCharDrop(e, idx) : undefined
+                }
+              >
                   {charManage && (
                     <GripVertical className="w-2.5 h-2.5 text-muted-foreground mr-0.5 cursor-grab" />
                   )}
                   <span className="text-[11px]">{tag}</span>
                   {charManage && (
                     <X
-                      className="w-3 h-3 text-red-500 ml-1 cursor-pointer"
+                      className="w-3 h-3 text-destructive ml-1 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteChar(idx);
@@ -848,10 +873,10 @@ export default function CategoryConfigPage() {
             </div>
 
             {showCharAdd && (
-              <div className="flex gap-1 mt-1.5">
+              <div className="flex gap-1 mt-2">
                 <input
                   ref={charAddInputRef}
-                  className="flex-1 bg-background border border-muted text-foreground px-2 py-1 text-[10px] outline-none focus:border-foreground"
+                  className="flex-1 bg-background border border-border text-foreground px-2 py-1 text-[10px] outline-none focus:border-primary rounded-sm"
                   placeholder="新关键词名称"
                   value={charAddName}
                   onChange={(e) => setCharAddName(e.target.value)}
@@ -861,13 +886,13 @@ export default function CategoryConfigPage() {
                   }}
                 />
                 <button
-                  className="border px-2 py-1 text-[10px] hover:border-green-500 hover:text-green-600"
+                  className="border border-border px-2 py-1 text-[10px] hover:border-green-500 hover:text-green-600 rounded-sm"
                   onClick={confirmCharAdd}
                 >
                   ✓
                 </button>
                 <button
-                  className="border px-2 py-1 text-[10px] hover:border-red-400 hover:text-red-400"
+                  className="border border-border px-2 py-1 text-[10px] hover:border-red-400 hover:text-red-400 rounded-sm"
                   onClick={cancelCharAdd}
                 >
                   ✕
@@ -875,7 +900,7 @@ export default function CategoryConfigPage() {
               </div>
             )}
             <button
-              className="inline-flex items-center justify-center w-6 h-6 text-muted-foreground border border-dashed border-muted hover:border-foreground text-sm mt-1"
+              className="inline-flex items-center justify-center w-6 h-6 text-muted-foreground border border-dashed border-border hover:border-primary text-sm mt-2 rounded-sm"
               onClick={showCharAddForm}
               title="新增关键词"
             >
@@ -884,17 +909,20 @@ export default function CategoryConfigPage() {
           </SectionCard>
 
           {/* ❹/❺ 情绪 + 背景 并排 */}
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <SectionCard
               title="情绪过程"
               hint="单选"
               className="flex-1"
+              activeColor={emotionProcess ? "bg-[#9b59b6]" : undefined}
             >
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {categoryMetadata?.emotion_processes.map((proc) => (
                   <Chip
                     key={proc}
                     selected={emotionProcess === proc}
+                    genderClass={TYPE_UNSELECTED.emotion}
+                    genderClassSelected={TYPE_SELECTED.emotion}
                     onClick={() => selectEmotion(proc)}
                   >
                     <span className="text-[11px]">{proc}</span>
@@ -906,12 +934,15 @@ export default function CategoryConfigPage() {
               title="故事背景"
               hint="单选"
               className="flex-1"
+              activeColor={storyBackground ? "bg-[#7f8c8d]" : undefined}
             >
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {categoryMetadata?.story_backgrounds.map((bg) => (
                   <Chip
                     key={bg}
                     selected={storyBackground === bg}
+                    genderClass={TYPE_UNSELECTED.bg}
+                    genderClassSelected={TYPE_SELECTED.bg}
                     onClick={() => selectBg(bg)}
                   >
                     <span className="text-[11px]">{bg}</span>
@@ -922,8 +953,8 @@ export default function CategoryConfigPage() {
           </div>
 
           {/* ❻ 自定义标签 */}
-          <SectionCard title="自定义标签" hint="自由输入你想要的标签">
-            <div className="flex flex-wrap gap-1.5">
+          <SectionCard title="自定义标签" hint="自由输入你想要的标签" activeColor={customTags.length > 0 ? "bg-[#f39c12]" : undefined}>
+            <div className="flex flex-wrap gap-2">
               {customTags.length === 0 && (
                 <span className="text-[10px] text-muted-foreground italic">
                   暂无自定义标签
@@ -933,6 +964,7 @@ export default function CategoryConfigPage() {
                 <Chip
                   key={tag}
                   selected={true}
+                  genderClassSelected={TYPE_SELECTED.custom}
                 >
                   <span className="text-[11px]">{tag}</span>
                   <X
@@ -945,9 +977,9 @@ export default function CategoryConfigPage() {
                 </Chip>
               ))}
             </div>
-            <div className="flex gap-1 mt-1.5">
+            <div className="flex gap-1 mt-2">
               <input
-                className="flex-1 bg-background border border-muted text-foreground px-2 py-1 text-[10px] outline-none focus:border-foreground"
+                className="flex-1 bg-background border border-border text-foreground px-2 py-1 text-[10px] outline-none focus:border-primary rounded-sm"
                 placeholder="输入自定义标签，回车添加..."
                 value={customTagInput}
                 onChange={(e) => setCustomTagInput(e.target.value)}
@@ -959,7 +991,7 @@ export default function CategoryConfigPage() {
                 }}
               />
               <button
-                className="border px-2 py-1 text-[10px] hover:border-foreground"
+                className="border border-border px-2 py-1 text-[10px] hover:border-primary rounded-sm"
                 onClick={addCustomTag}
               >
                 添加
@@ -977,7 +1009,7 @@ export default function CategoryConfigPage() {
                 step={1000}
                 value={targetLength}
                 onChange={(e) => setTargetLength(Number(e.target.value))}
-                className="flex-1 accent-foreground"
+                className="flex-1 accent-primary"
               />
               <span className="text-xs font-medium w-16 text-right tabular-nums">
                 {targetLength} 字
@@ -990,10 +1022,10 @@ export default function CategoryConfigPage() {
         </div>
 
         {/* ============ 右面板 ============ */}
-        <div className="w-[280px] flex-shrink-0 border-l overflow-y-auto p-3 bg-background">
-          <div className="flex items-center gap-1 mb-3 pb-2 border-b">
+        <div className="w-[220px] flex-shrink-0 border-l border-border overflow-y-auto p-4 bg-background sticky top-0 self-start h-fit">
+          <div className="flex items-center gap-1 mb-3 pb-2 border-b border-border">
             <h3 className="text-[13px] font-semibold">已选分类</h3>
-            <span className="ml-auto text-[10px] text-muted-foreground bg-background border px-1.5 py-0.5">
+            <span className="ml-auto text-[10px] text-muted-foreground bg-muted border border-border px-1.5 py-0.5 rounded-sm">
               {selectionCount} 项
             </span>
           </div>
@@ -1089,17 +1121,24 @@ function SectionCard({
   hint,
   children,
   className = "",
+  activeColor,
 }: {
   title: string;
   right?: React.ReactNode;
   hint?: string;
   children: React.ReactNode;
   className?: string;
+  activeColor?: string;
 }) {
   return (
-    <div className={`border mb-2 ${className}`}>
-      <div className="flex items-center justify-between px-2.5 py-1.5 border-b">
-        <span className="text-[12px] font-semibold">{title}</span>
+    <div className={`border border-border rounded-lg mb-2 bg-card ${className}`}>
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/30 rounded-t-lg">
+        <div className="flex items-center gap-1.5">
+          {activeColor && (
+            <span className={`inline-block w-1.5 h-1.5 rounded-full ${activeColor}`} />
+          )}
+          <span className="text-[12px] font-semibold">{title}</span>
+        </div>
         <div className="flex items-center gap-1.5">
           {right}
           {hint && (
@@ -1107,10 +1146,11 @@ function SectionCard({
           )}
         </div>
       </div>
-      <div className="px-2.5 py-1.5">{children}</div>
+      <div className="px-3 py-2">{children}</div>
     </div>
   );
 }
+
 
 /** 右侧选中标签 */
 function SelGroup({

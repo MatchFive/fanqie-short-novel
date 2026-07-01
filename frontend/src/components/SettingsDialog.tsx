@@ -224,7 +224,7 @@ export default function SettingsDialog({ open, onClose }: SettingsDialogProps) {
             </div>
             <div className="mt-3">
               <button
-                className="px-3 py-1.5 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85"
+                className="px-3 py-1.5 text-[13px] border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85"
                 onClick={handleTestConnection}
                 disabled={connectionStatus === 'testing'}
               >
@@ -320,13 +320,13 @@ export default function SettingsDialog({ open, onClose }: SettingsDialogProps) {
 
         <div className="px-5 py-3 border-t border-border flex justify-between flex-shrink-0">
           <button
-            className="px-4 py-2 text-[13px] border border-border cursor-pointer hover:bg-hover"
+            className="px-4 py-2 text-[13px] border border-border rounded-sm cursor-pointer hover:bg-muted"
             onClick={handleReset}
           >
             恢复默认设置
           </button>
           <button
-            className="px-4 py-2 text-[13px] border border-foreground bg-foreground text-primary-foreground cursor-pointer hover:opacity-85"
+            className="px-4 py-2 text-[13px] border border-primary bg-primary text-primary-foreground rounded-sm cursor-pointer hover:opacity-85"
             onClick={handleSave}
           >
             保存设置

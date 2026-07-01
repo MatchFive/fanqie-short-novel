@@ -204,7 +204,7 @@ export default function IntegratePage() {
           <AlertCircle className="w-8 h-8 text-[#DC2626] opacity-60" />
           <p className="text-xs text-muted-foreground">{loadError}</p>
           <button
-            className="px-3 py-1.5 text-xs border border-foreground hover:bg-hover cursor-pointer inline-flex items-center gap-1.5"
+            className="px-3 py-1.5 text-xs border border-border rounded-sm hover:bg-muted cursor-pointer inline-flex items-center gap-1.5"
             onClick={() => {
               if (novelId) {
                 setIsPageLoading(true);
